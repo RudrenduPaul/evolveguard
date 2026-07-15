@@ -1,0 +1,77 @@
+{
+  "name": "evolveguard",
+  "version": "0.1.0",
+  "description": "Regression-testing CLI for self-edited Claude Agent Skills (SKILL.md, MEMORY.md) -- golden-transcript record/replay against a skill's own declared and inferred capability surface, zero hosted infrastructure.",
+  "keywords": [
+    "ai-agents",
+    "claude-code",
+    "agent-skills",
+    "regression-testing",
+    "cli-tool",
+    "typescript",
+    "npm-package",
+    "llm-tooling",
+    "eval-harness",
+    "developer-tools"
+  ],
+  "license": "MIT",
+  "author": "Rudrendu Paul",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RudrenduPaul/evolveguard.git"
+  },
+  "homepage": "https://github.com/RudrenduPaul/evolveguard#readme",
+  "bugs": {
+    "url": "https://github.com/RudrenduPaul/evolveguard/issues"
+  },
+  "type": "commonjs",
+  "main": "dist/evolveguard/index.js",
+  "types": "dist/evolveguard/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/evolveguard/index.d.ts",
+      "require": "./dist/evolveguard/index.js",
+      "default": "./dist/evolveguard/index.js"
+    }
+  },
+  "bin": {
+    "evolveguard": "dist/evolveguard-cli/cli.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "commander": "12.1.0",
+    "minimatch": "9.0.9",
+    "yaml": "2.9.0",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.9.1",
+    "@types/node": "20.14.15",
+    "@vitest/coverage-v8": "4.1.10",
+    "eslint": "9.9.1",
+    "globals": "^15.9.0",
+    "prettier": "3.3.3",
+    "typescript": "5.5.4",
+    "typescript-eslint": "8.3.0",
+    "vitest": "4.1.10"
+  }
+}
