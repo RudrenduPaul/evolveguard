@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml/badge.svg)](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](package.json)
+[![Node](https://img.shields.io/badge/node-%3E%3D20.12-brightgreen)](package.json)
 
 Catch behavioral drift when a Claude Agent Skill edits itself, before the edit ships.
 
