@@ -299,8 +299,7 @@ See `src/evolveguard/index.ts` for the full exported surface: `parseSkillFile`,
 
 ## False-positive rate
 
-Per the anti-sycophancy rule in this repo's own `[redacted]`, no accuracy claim ships
-without the command that produced it. Run:
+No accuracy claim ships without the command that produced it. Run:
 
 ```bash
 npx vitest run src/evolveguard/benchmark.test.ts
