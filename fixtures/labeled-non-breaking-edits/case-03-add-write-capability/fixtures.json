@@ -1,0 +1,7 @@
+[
+  {
+    "id": "scan-a-monorepo",
+    "prompt": "scan a monorepo",
+    "expectedToolCalls": [{ "tool": "fs.read" }, { "tool": "fs.write" }]
+  }
+]

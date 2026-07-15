@@ -1,0 +1,7 @@
+[
+  {
+    "id": "write-changelog-entry",
+    "prompt": "write a changelog entry from recent commits",
+    "expectedToolCalls": [{ "tool": "fs.write" }]
+  }
+]

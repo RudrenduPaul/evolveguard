@@ -1,0 +1,4 @@
+{
+  "classification": "breaking",
+  "reason": "filesystem changed from read-only to read-write. This is the sample scenario from the EvolveGuard product spec: a monorepo-scan fixture that gains an fs.write capability the baseline never had."
+}

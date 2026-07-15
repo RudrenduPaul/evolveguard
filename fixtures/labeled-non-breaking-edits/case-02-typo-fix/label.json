@@ -1,0 +1,4 @@
+{
+  "classification": "non-breaking",
+  "reason": "A single-word typo fix in the body prose ('pattenrs' -> 'patterns'). No frontmatter field changed."
+}

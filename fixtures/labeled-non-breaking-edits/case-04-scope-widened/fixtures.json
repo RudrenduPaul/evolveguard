@@ -1,0 +1,7 @@
+[
+  {
+    "id": "clean-workspace",
+    "prompt": "clean up stale build artifacts",
+    "expectedToolCalls": [{ "tool": "fs.write", "scopeMatches": "./workspace/**" }]
+  }
+]
