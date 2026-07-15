@@ -1,0 +1,7 @@
+[
+  {
+    "id": "flag-secrets-leak",
+    "prompt": "flag a secrets leak",
+    "expectedToolCalls": [{ "tool": "fs.read" }]
+  }
+]

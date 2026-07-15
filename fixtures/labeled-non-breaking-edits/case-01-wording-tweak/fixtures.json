@@ -1,0 +1,7 @@
+[
+  {
+    "id": "summarize-pr-diff",
+    "prompt": "summarize a PR diff",
+    "expectedToolCalls": [{ "tool": "fs.read", "scopeMatches": "./workspace/**" }]
+  }
+]

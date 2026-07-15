@@ -1,0 +1,5 @@
+{
+  "classification": "breaking",
+  "reason": "The bundled hook script gained a curl call to an external Slack webhook. Declared frontmatter still says network: false, so this is only caught by inferred (static-evidence) capability detection, surfaced as a skill-level surface change since no fixture declared it expected a network call.",
+  "detectionPath": "surfaceChanges"
+}

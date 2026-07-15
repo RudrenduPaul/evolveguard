@@ -1,0 +1,4 @@
+{
+  "classification": "breaking",
+  "reason": "scope widened from './workspace/**' to './**' -- the skill can now write anywhere in the repo, not just the workspace directory. Same tool (fs.write), different, broader authority."
+}
