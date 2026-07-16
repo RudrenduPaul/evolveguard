@@ -348,9 +348,9 @@ Not yet -- see [Status](#status).
 ## Status
 
 This is a v0.1 release: a small, focused addition to the existing Claude Agent Skills
-ecosystem. It ships fully MIT-licensed with no proprietary tier. `npm pack --dry-run` passes clean and
-`package.json` metadata is publish-ready, but the actual `npm publish` is a deliberate,
-separate, 2FA-gated step this repo does not trigger on its own.
+ecosystem. It ships fully MIT-licensed with no proprietary tier. `npm pack --dry-run`
+passes clean and `package.json` metadata is publish-ready, but the actual `npm publish`
+is a deliberate, separate, 2FA-gated step this repo does not trigger on its own.
 
 ## Contributing
 
