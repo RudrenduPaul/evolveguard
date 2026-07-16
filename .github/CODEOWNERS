@@ -1,0 +1,5 @@
+# CODEOWNERS
+# Require review from @RudrenduPaul for changes to CI/CD workflow definitions,
+# since workflows can execute arbitrary code with repo secrets/permissions.
+
+.github/workflows/** @RudrenduPaul
