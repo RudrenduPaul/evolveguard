@@ -12,8 +12,7 @@ import type {
  * Compares one fixture's baseline tool-call sequence against its replayed
  * sequence and classifies the result. PASS = identical tool set and scopes.
  * DRIFT = a tool appeared that wasn't there before, a tool disappeared, or
- * a tool's scope changed -- each surfaced as a specific, cited change, per
- * the anti-sycophancy rule that a drift is a stated behavioral change, not
+ * a tool's scope changed -- each surfaced as a specific, cited change, not
  * an unexplained failure.
  */
 export function diffFixture(
