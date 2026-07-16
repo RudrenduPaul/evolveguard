@@ -15,7 +15,7 @@ Each case directory contains:
 | ------------------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `case-01-wording-tweak`         | non-breaking   | Description and body prose reworded, no frontmatter change                                                                                                                              |
 | `case-02-typo-fix`              | non-breaking   | Single-word typo fixed in body prose                                                                                                                                                    |
-| `case-03-add-write-capability`  | breaking       | `filesystem: read-only` -> `read-write` (the same "scan a monorepo" example used in the README's own quickstart)                                                                                              |
+| `case-03-add-write-capability`  | breaking       | `filesystem: read-only` -> `read-write` (the same "scan a monorepo" example used in the README's own quickstart)                                                                        |
 | `case-04-scope-widened`         | breaking       | `scope` widened from `./workspace/**` to `./**`                                                                                                                                         |
 | `case-05-new-hook-network-call` | breaking       | Bundled hook script gains a `curl` call to an external webhook; declared `network:` frontmatter is unchanged, so this is only caught by inferred (static-evidence) capability detection |
 
