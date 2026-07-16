@@ -14,8 +14,9 @@ import { diffAll } from './diff/index';
  * Benchmark command this number comes from:
  *   npx vitest run src/evolveguard/benchmark.test.ts
  *
- * Per [redacted] anti-sycophancy rule #2, this number must never be
- * stated in the README without this exact command reproducing it.
+ * This number must never be stated in the README without this exact
+ * command reproducing it -- no claiming a benchmark result without a
+ * runnable, reviewable way to reproduce it.
  */
 
 const CORPUS_DIR = path.resolve(__dirname, '../../fixtures/labeled-non-breaking-edits');
