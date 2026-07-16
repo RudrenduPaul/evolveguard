@@ -1,4 +1,4 @@
-/** Shared WHAT/WHY/FIX error formatting, matching the founders' other CLI tools in this portfolio. */
+/** Shared WHAT/WHY/FIX error formatting for EvolveGuardError messages. */
 export function formatWhatWhyFix(what: string, why: string, fix: string): string {
   return `WHAT: ${what}\nWHY:  ${why}\nFIX:  ${fix}`;
 }
