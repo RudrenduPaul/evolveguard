@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "evolveguard"
+version = "0.1.0"
+description = "Regression-testing CI gate for self-edited Claude Agent Skills (SKILL.md, MEMORY.md): golden-transcript record/replay against a skill's own declared and inferred capability surface, zero hosted infrastructure."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+  { name = "Rudrendu Paul" },
+  { name = "Sourav Nandy" },
+]
+keywords = ["ai-agents", "claude-code", "agent-skills", "regression-testing", "cli-tool", "eval-harness", "developer-tools", "ci-gate"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Testing",
+  "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = [
+  "PyYAML>=6.0,<7",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0,<9",
+  "build>=1.0,<2",
+  "twine>=5.0,<7",
+]
+
+[project.urls]
+Homepage = "https://github.com/RudrenduPaul/evolveguard"
+Repository = "https://github.com/RudrenduPaul/evolveguard"
+"Bug Tracker" = "https://github.com/RudrenduPaul/evolveguard/issues"
+Changelog = "https://github.com/RudrenduPaul/evolveguard/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/RudrenduPaul/evolveguard/blob/main/docs/getting-started.md"
+"Author - Rudrendu Paul" = "https://github.com/RudrenduPaul"
+"Author - Sourav Nandy" = "https://github.com/Sourav-nandy-ai"
+
+[project.scripts]
+evolveguard = "evolveguard.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/evolveguard"]
+
+[tool.hatch.build.targets.sdist]
+only-include = [
+  "src/evolveguard",
+  "tests",
+  "examples",
+  "README.md",
+  "LICENSE",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,18 +1,35 @@
 # evolveguard
 
 [![CI](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml/badge.svg)](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/evolveguard.svg)](https://pypi.org/project/evolveguard/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20.12-brightgreen)](package.json)
 
 Catch behavioral drift when a Claude Agent Skill edits itself, before the edit ships.
 
 ```bash
+# PyPI -- Python CLI + library (genuine port)
+pip install evolveguard
+```
+
+```bash
+# npm -- JavaScript/TypeScript CLI + library
 npm install -g evolveguard
 ```
 
-> Not yet published to npm. The package is publish-ready (`npm pack --dry-run` passes
-> clean) but the actual `npm publish` is a deliberate, separate step -- see
-> [Status](#status) below. Until then, clone the repo and run `npm run build && npm link`.
+> Neither package is published yet, for two separate, unrelated reasons -- see
+> [Status](#status) below for the full detail:
+>
+> - **npm** is blocked by an account-level constraint: this account's npm 2FA is
+>   security-key/passkey-only with no authenticator-app or OTP fallback configured,
+>   which blocks the `npm publish` step independent of the code itself.
+> - **PyPI** is blocked by PyPI's own new-project-creation anti-abuse throttle
+>   (`429 Too many new projects created`) on this account, confirmed across
+>   repeated upload attempts -- also not a code issue.
+>
+> Until either clears, clone the repo: `npm run build && npm link` for the
+> TypeScript CLI, or `cd python && pip install -e .` for the Python package. See
+> [`python/README.md`](./python/README.md) for the Python-specific walkthrough.
 
 ---
 
@@ -271,7 +288,12 @@ coding agent.
 ## Library API
 
 evolveguard also exports a programmatic API for the same pipeline, if you'd rather
-integrate it into your own tooling than shell out to the CLI:
+integrate it into your own tooling than shell out to the CLI. Both distributions
+expose the same functions and the same JSON-compatible file format -- a baseline
+recorded with one CLI can be checked with the other (see
+[docs/concepts.md](./docs/concepts.md#file-formats-and-cross-distribution-compatibility)).
+
+**TypeScript:**
 
 ```ts
 import {
@@ -296,6 +318,24 @@ See `src/evolveguard/index.ts` for the full exported surface: `parseSkillFile`,
 `deriveCapabilitySurface`, `loadSkill`, `buildFixtureSnapshots`, `loadFixtures`,
 `recordBaseline`, `replaySkill`, `diffFixture`, `diffAll`, `diffSurface`, `writeBaseline`,
 `readBaseline`, `writeReport`, `readReport`, plus the shared `types.ts` interfaces.
+
+**Python** (`pip install evolveguard`):
+
+```python
+from evolveguard import record_baseline, replay_skill, diff_all, write_baseline, read_baseline
+
+baseline = record_baseline("./SKILL.md", "./fixtures.json")
+write_baseline("./.evolveguard-baseline.json", baseline)
+
+# ... skill gets edited ...
+
+saved = read_baseline("./.evolveguard-baseline.json")
+replay = replay_skill("./SKILL.md", saved)
+report = diff_all(saved, replay)
+```
+
+See [`python/README.md`](./python/README.md) for the Python-specific walkthrough and
+the same exported surface under `evolveguard/__init__.py`.
 
 ## False-positive rate
 
@@ -342,15 +382,29 @@ surface comes entirely from static evidence found in the body text.
 No. See "How it's different" above -- evolveguard deliberately does not build or host a
 self-evolving agent framework; it only tests skill/memory edits that already happened.
 
-**Is this published on npm yet?**
-Not yet -- see [Status](#status).
+**Is this published on npm or PyPI yet?**
+Not yet on either -- see [Status](#status) for the two separate, unrelated blockers.
 
 ## Status
 
 This is a v0.1 release: a small, focused addition to the existing Claude Agent Skills
-ecosystem. It ships fully MIT-licensed with no proprietary tier. `npm pack --dry-run`
-passes clean and `package.json` metadata is publish-ready, but the actual `npm publish`
-is a deliberate, separate, 2FA-gated step this repo does not trigger on its own.
+ecosystem. It ships fully MIT-licensed with no proprietary tier, as two independent,
+equally first-class packages -- both fully built, tested, and publish-ready, blocked on
+two separate account-level issues, neither a code problem:
+
+- **PyPI (`evolveguard`, Python)** -- a genuine independent port, not a wrapper around
+  the Node binary (see [`python/README.md`](./python/README.md)). Wheel and sdist are
+  built, inspected, and verified end to end from a fresh venv install. The first
+  `twine upload` on this account is blocked by PyPI's own new-project-creation
+  anti-abuse throttle (`429 Too many new projects created`), confirmed across repeated
+  upload attempts. It will publish as soon as that throttle clears; no code change is
+  needed. Clone the repo and run `cd python && pip install -e .` in the meantime.
+- **npm (`evolveguard`, TypeScript)** -- `npm pack --dry-run` passes clean and
+  `package.json` metadata is publish-ready, but the actual `npm publish` is blocked on
+  a separate account-level constraint: this npm account's 2FA is security-key/
+  passkey-only, with no authenticator-app or OTP fallback configured, and npm currently
+  requires completing that 2FA challenge interactively to publish. Clone the repo and
+  run `npm run build && npm link` for the TypeScript CLI locally in the meantime.
 
 ## Contributing
 
