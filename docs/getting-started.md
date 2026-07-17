@@ -110,7 +110,13 @@ instead of shelling out to a CLI binary.
 **TypeScript:**
 
 ```ts
-import { recordBaseline, replaySkill, diffAll, writeBaseline, readBaseline } from 'evolveguard';
+import {
+  recordBaseline,
+  replaySkill,
+  diffAll,
+  writeBaseline,
+  readBaseline,
+} from 'evolveguard';
 
 const baseline = recordBaseline('./SKILL.md', './fixtures.json');
 writeBaseline('./.evolveguard-baseline.json', baseline);

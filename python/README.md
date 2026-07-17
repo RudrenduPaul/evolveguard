@@ -42,6 +42,7 @@ uv add evolveguard
 > throttle (`429 Too many new projects created`), confirmed across
 > repeated upload attempts -- not a code or readiness issue. Until that
 > clears, clone the repo and install from source:
+>
 > ```bash
 > git clone https://github.com/RudrenduPaul/evolveguard.git
 > cd evolveguard/python && pip install -e .
@@ -123,7 +124,7 @@ conversation transcript. It is a static, deterministic tool by design:
    separately diffs the whole capability surface so a new capability that
    no fixture's `expectedToolCalls` happened to cover still gets caught.
 
-evolveguard detects changes in what a skill is *declared or shown* to be
+evolveguard detects changes in what a skill is _declared or shown_ to be
 capable of. It can't tell you whether a live agent run would actually
 behave differently on a given prompt -- that's a real, intentional scope
 limit. The tradeoff: it just needs a `SKILL.md` file and a fixtures file,

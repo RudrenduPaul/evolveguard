@@ -51,7 +51,7 @@ source, scope?, evidence?}`. Every entry is either:
 
 - **`declared`** -- read directly from the skill file's own YAML
   frontmatter (`tools`, `network`, `filesystem`, `scope`). A `filesystem:
-  read-write` skill contributes both an `fs.read` and an `fs.write` entry,
+read-write` skill contributes both an `fs.read` and an `fs.write` entry,
   each scoped to the frontmatter's `scope` glob (default `./**`).
 - **`inferred`** -- found by a read-only regex scan of the skill's body
   text and any bundled hook scripts referenced in `hooks:`. This is what
@@ -97,7 +97,7 @@ is exactly what surface-level diffing (below) exists to close.
   `added` (a new tool call appeared), `removed` (one disappeared), or
   `scope-changed` (same tool, different scope). Each change carries a
   specific, human-readable `message`, never a bare boolean.
-- **Surface-level** (`diffSurface`/`diff_surface`): compares the *whole*
+- **Surface-level** (`diffSurface`/`diff_surface`): compares the _whole_
   recorded vs. replayed capability surface, independent of any fixture.
   This is what catches a new capability no fixture's `expectedToolCalls`
   happened to cover -- `diffAll`/`diff_all` filters out any tool a
@@ -112,7 +112,7 @@ is exactly what surface-level diffing (below) exists to close.
 
 ## Scope
 
-evolveguard detects changes in what a skill is *declared or shown* to be
+evolveguard detects changes in what a skill is _declared or shown_ to be
 capable of -- a proxy for behavior, derived entirely from static analysis
 of the skill artifact itself. It cannot tell you whether a live agent run
 would actually behave differently on a given prompt; that would require

@@ -9,10 +9,10 @@ README's "How it works" section for the full design.
 
 ## Supported versions
 
-| Package | Version | Supported |
-| --- | --- | --- |
-| `evolveguard` (npm) | not yet published | N/A |
-| `evolveguard` (PyPI) | not yet published | N/A |
+| Package              | Version           | Supported |
+| -------------------- | ----------------- | --------- |
+| `evolveguard` (npm)  | not yet published | N/A       |
+| `evolveguard` (PyPI) | not yet published | N/A       |
 
 Both distributions are pre-1.0 and under active development. Security fixes land on
 the latest `0.1.x` release of each; there is no older supported line to backport to yet.

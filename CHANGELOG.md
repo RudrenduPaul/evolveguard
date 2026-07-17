@@ -25,7 +25,7 @@ maintained together. See `python/README.md` for Python-specific usage.
   (`0` PASS, `1` DRIFT, `2` usage/parse error) as the npm CLI: `--fixtures`,
   `--baseline`, `--report`, `--allow-drift`, `--json`.
 - Programmatic library API: `from evolveguard import record_baseline, replay_skill,
-  diff_all, write_baseline, read_baseline, ...`, returning the same JSON-compatible
+diff_all, write_baseline, read_baseline, ...`, returning the same JSON-compatible
   dataclasses the CLI formats (`Baseline`, `ReplayResult`, `EvolveGuardReport`).
 - The full record -> replay -> diff pipeline reimplemented as genuine Python logic:
   YAML frontmatter parsing (declared scope), static regex evidence scanning for

@@ -19,6 +19,7 @@ npm install -g evolveguard
 
 > Neither package is published yet, for two separate, unrelated reasons -- see
 > [Status](#status) below for the full detail:
+>
 > - **npm** is blocked by an account-level constraint: this account's npm 2FA is
 >   security-key/passkey-only with no authenticator-app or OTP fallback configured,
 >   which blocks the `npm publish` step independent of the code itself.
