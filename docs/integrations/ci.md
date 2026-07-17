@@ -9,6 +9,12 @@ file against it, failing the job on real exit code `1`.
 
 ## GitHub Actions -- Python CLI
 
+Not yet live on PyPI (see the project README's Status section for the real
+blocker -- a PyPI new-project anti-abuse throttle, not a code issue), so
+`pip install evolveguard` below will start working once that clears;
+`pip install git+https://github.com/RudrenduPaul/evolveguard.git#subdirectory=python`
+is the working install command in CI until then.
+
 ```yaml
 name: evolveguard gate
 on: [pull_request]

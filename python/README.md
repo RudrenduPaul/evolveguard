@@ -35,14 +35,24 @@ or with [uv](https://docs.astral.sh/uv/):
 uv add evolveguard
 ```
 
+> **Not yet live on PyPI.** The package is fully built, tested, and
+> publish-ready (wheel + sdist built, inspected, and verified end to end
+> from a fresh venv install), but the first `twine upload` on this account
+> is currently blocked by PyPI's own new-project-creation anti-abuse
+> throttle (`429 Too many new projects created`), confirmed across
+> repeated upload attempts -- not a code or readiness issue. Until that
+> clears, clone the repo and install from source:
+> ```bash
+> git clone https://github.com/RudrenduPaul/evolveguard.git
+> cd evolveguard/python && pip install -e .
+> ```
+
 **About the npm package:** `evolveguard` is also registered as an npm
-package name, but publishing it is currently blocked by an account-level
-2FA constraint (the npm account's second factor is security-key/passkey
-only, with no authenticator-app or OTP fallback configured) -- this is
-unrelated to the code itself and does not affect this PyPI package. Until
-that's resolved, `pip install evolveguard` is the working install path;
-clone the repo and run `npm run build && npm link` if you need the
-TypeScript CLI locally in the meantime.
+package name, but publishing it is currently blocked by a separate,
+unrelated account-level 2FA constraint (the npm account's second factor is
+security-key/passkey only, with no authenticator-app or OTP fallback
+configured). Clone the repo and run `npm run build && npm link` if you
+need the TypeScript CLI locally in the meantime.
 
 ## Quickstart
 

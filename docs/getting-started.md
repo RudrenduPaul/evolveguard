@@ -22,6 +22,12 @@ run `npm run build && npm link` for the TypeScript CLI in the meantime.
 pip install evolveguard
 ```
 
+Not yet live either, for a separate, unrelated reason: the first `twine
+upload` on this account is blocked by PyPI's own new-project-creation
+anti-abuse throttle (`429 Too many new projects created`), confirmed
+across repeated upload attempts -- not a code issue. Until that clears,
+clone the repo and run `cd python && pip install -e .` for the Python CLI.
+
 Neither install makes a network call at record/check time -- both are
 fully static, local tools by design (see "How it works" below).
 

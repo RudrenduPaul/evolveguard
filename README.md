@@ -8,7 +8,7 @@
 Catch behavioral drift when a Claude Agent Skill edits itself, before the edit ships.
 
 ```bash
-# PyPI -- Python CLI + library (genuine port, live today)
+# PyPI -- Python CLI + library (genuine port)
 pip install evolveguard
 ```
 
@@ -17,12 +17,17 @@ pip install evolveguard
 npm install -g evolveguard
 ```
 
-> The npm package is not yet published: this account's npm 2FA is
-> security-key/passkey-only with no authenticator-app or OTP fallback configured,
-> which blocks the `npm publish` step independent of the code itself -- see
-> [Status](#status) below. Until that's resolved, clone the repo and run
-> `npm run build && npm link` for the TypeScript CLI locally. The Python package has
-> no such blocker and is live on PyPI today; see
+> Neither package is published yet, for two separate, unrelated reasons -- see
+> [Status](#status) below for the full detail:
+> - **npm** is blocked by an account-level constraint: this account's npm 2FA is
+>   security-key/passkey-only with no authenticator-app or OTP fallback configured,
+>   which blocks the `npm publish` step independent of the code itself.
+> - **PyPI** is blocked by PyPI's own new-project-creation anti-abuse throttle
+>   (`429 Too many new projects created`) on this account, confirmed across
+>   repeated upload attempts -- also not a code issue.
+>
+> Until either clears, clone the repo: `npm run build && npm link` for the
+> TypeScript CLI, or `cd python && pip install -e .` for the Python package. See
 > [`python/README.md`](./python/README.md) for the Python-specific walkthrough.
 
 ---
@@ -376,25 +381,29 @@ surface comes entirely from static evidence found in the body text.
 No. See "How it's different" above -- evolveguard deliberately does not build or host a
 self-evolving agent framework; it only tests skill/memory edits that already happened.
 
-**Is this published on npm yet?**
-Not yet -- see [Status](#status). It is published on PyPI today (`pip install evolveguard`).
+**Is this published on npm or PyPI yet?**
+Not yet on either -- see [Status](#status) for the two separate, unrelated blockers.
 
 ## Status
 
 This is a v0.1 release: a small, focused addition to the existing Claude Agent Skills
 ecosystem. It ships fully MIT-licensed with no proprietary tier, as two independent,
-equally first-class packages -- pick whichever fits your toolchain:
+equally first-class packages -- both fully built, tested, and publish-ready, blocked on
+two separate account-level issues, neither a code problem:
 
-- **PyPI (`evolveguard`, Python)** -- live today, a genuine independent port, not a
-  wrapper around the Node binary. See [`python/README.md`](./python/README.md).
+- **PyPI (`evolveguard`, Python)** -- a genuine independent port, not a wrapper around
+  the Node binary (see [`python/README.md`](./python/README.md)). Wheel and sdist are
+  built, inspected, and verified end to end from a fresh venv install. The first
+  `twine upload` on this account is blocked by PyPI's own new-project-creation
+  anti-abuse throttle (`429 Too many new projects created`), confirmed across repeated
+  upload attempts. It will publish as soon as that throttle clears; no code change is
+  needed. Clone the repo and run `cd python && pip install -e .` in the meantime.
 - **npm (`evolveguard`, TypeScript)** -- `npm pack --dry-run` passes clean and
   `package.json` metadata is publish-ready, but the actual `npm publish` is blocked on
-  an account-level constraint outside this repo's control: this npm account's 2FA is
-  security-key/passkey-only, with no authenticator-app or OTP fallback configured, and
-  npm currently requires completing that 2FA challenge interactively to publish. This
-  is not a code issue and not a decision to withhold the package; it will publish as
-  soon as that account-level blocker is resolved. Clone the repo and run
-  `npm run build && npm link` for the TypeScript CLI locally in the meantime.
+  a separate account-level constraint: this npm account's 2FA is security-key/
+  passkey-only, with no authenticator-app or OTP fallback configured, and npm currently
+  requires completing that 2FA challenge interactively to publish. Clone the repo and
+  run `npm run build && npm link` for the TypeScript CLI locally in the meantime.
 
 ## Contributing
 
