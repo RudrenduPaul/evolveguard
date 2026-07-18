@@ -4,9 +4,9 @@ Regression-testing CI gate for self-edited Claude Agent Skills -- `SKILL.md`
 manifests and Claude Code auto-memory `MEMORY.md` files -- catching
 behavioral drift before an edit ships.
 
-[![PyPI version](https://img.shields.io/pypi/v/evolveguard.svg)](https://pypi.org/project/evolveguard/)
+[![PyPI version](https://img.shields.io/pypi/v/evolveguard-cli.svg)](https://pypi.org/project/evolveguard-cli/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/RudrenduPaul/evolveguard/blob/main/LICENSE)
-[![Python versions](https://img.shields.io/pypi/pyversions/evolveguard.svg)](https://pypi.org/project/evolveguard/)
+[![Python versions](https://img.shields.io/pypi/pyversions/evolveguard-cli.svg)](https://pypi.org/project/evolveguard-cli/)
 [![CI](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml/badge.svg)](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml)
 
 ## Why this exists
@@ -26,13 +26,13 @@ sequence, or a flagged drift with a specific reason.
 ## Install
 
 ```bash
-pip install evolveguard
+pip install evolveguard-cli
 ```
 
 or with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv add evolveguard
+uv add evolveguard-cli
 ```
 
 > **Not yet live on PyPI.** The package is fully built, tested, and
@@ -237,3 +237,4 @@ exists yet for either distribution, so it isn't claimed here.
 ## License
 
 MIT, see [LICENSE](https://github.com/RudrenduPaul/evolveguard/blob/main/LICENSE).
+
