@@ -1,3 +1,10 @@
+# evolveguard (Python) -- renamed to evolveguard-cli
+
+**This PyPI package has been renamed.** Install [`evolveguard-cli`](https://pypi.org/project/evolveguard-cli/)
+instead: `pip install evolveguard-cli`. This package will not receive further updates.
+
+---
+
 # evolveguard (Python)
 
 Regression-testing CI gate for self-edited Claude Agent Skills -- `SKILL.md`
