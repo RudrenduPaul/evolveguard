@@ -1,7 +1,7 @@
 # evolveguard
 
 [![CI](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml/badge.svg)](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml)
-[![PyPI version](https://img.shields.io/pypi/v/evolveguard.svg)](https://pypi.org/project/evolveguard/)
+[![PyPI version](https://img.shields.io/pypi/v/evolveguard-cli.svg)](https://pypi.org/project/evolveguard-cli/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20.12-brightgreen)](package.json)
 
@@ -9,7 +9,7 @@ Catch behavioral drift when a Claude Agent Skill edits itself, before the edit s
 
 ```bash
 # PyPI -- Python CLI + library (genuine port)
-pip install evolveguard
+pip install evolveguard-cli
 ```
 
 ```bash
@@ -17,19 +17,13 @@ pip install evolveguard
 npm install -g evolveguard
 ```
 
-> Neither package is published yet, for two separate, unrelated reasons -- see
-> [Status](#status) below for the full detail:
->
-> - **npm** is blocked by an account-level constraint: this account's npm 2FA is
->   security-key/passkey-only with no authenticator-app or OTP fallback configured,
->   which blocks the `npm publish` step independent of the code itself.
-> - **PyPI** is blocked by PyPI's own new-project-creation anti-abuse throttle
->   (`429 Too many new projects created`) on this account, confirmed across
->   repeated upload attempts -- also not a code issue.
->
-> Until either clears, clone the repo: `npm run build && npm link` for the
-> TypeScript CLI, or `cd python && pip install -e .` for the Python package. See
-> [`python/README.md`](./python/README.md) for the Python-specific walkthrough.
+> Both packages are live: `evolveguard-cli` on PyPI, `evolveguard` on npm (the npm
+> package has not been renamed to match the `-cli` convention yet -- see
+> [Status](#status) below). `npm install -g evolveguard` and
+> `pip install evolveguard-cli` both work today; the demo GIFs below were recorded
+> against the published packages, not a local build.
+
+![Terminal recording: npm install -g evolveguard, then evolveguard --version and evolveguard --help, showing the published CLI's command list.](docs/demo.gif)
 
 ---
 
@@ -67,6 +61,8 @@ exit code 1 (DRIFT blocks merge by default; override with --allow-drift)
 
 That's real output from this repo's own `fixtures/labeled-non-breaking-edits/case-03-add-write-capability/`
 test case, wired to `filesystem: read-only` -> `read-write` in the skill's frontmatter.
+
+![Terminal recording: evolveguard record against the read-only version of the monorepo-scanner skill, then evolveguard check after the skill is edited to add a filesystem write, showing a DRIFT result and exit code 1.](docs/usage.gif)
 
 ## How it works
 
@@ -364,47 +360,80 @@ Skills ecosystem lets skills and memory files change an agent's behavior without
 human necessarily reviewing every edit for regression, and no existing tool checks that
 specific artifact shape without requiring SDK integration or a live agent run.
 
+## Status
+
+This is a v0.1 release: a small, focused addition to the existing Claude Agent Skills
+ecosystem. It ships fully MIT-licensed with no proprietary tier, as two independent,
+equally first-class packages:
+
+- **PyPI (`evolveguard-cli`, Python)** -- live at
+  [pypi.org/project/evolveguard-cli](https://pypi.org/project/evolveguard-cli/). A
+  genuine independent port, not a wrapper around the Node binary (see
+  [`python/README.md`](./python/README.md)). `pip install evolveguard-cli` installs it
+  directly. The package was originally published under the name `evolveguard`; that
+  older PyPI project is retired and no longer receives updates -- install
+  `evolveguard-cli` instead.
+- **npm (`evolveguard`, TypeScript)** -- live at
+  [npmjs.com/package/evolveguard](https://www.npmjs.com/package/evolveguard).
+  `npm install -g evolveguard` installs it directly. The npm package has not yet been
+  renamed to `evolveguard-cli` to match the PyPI package's naming convention; the
+  installable name is still `evolveguard` for now.
+
 ## FAQ
+
+**What is evolveguard, exactly?**
+A command-line tool and library that detects capability drift in Claude Agent Skill
+files (`SKILL.md`) and Claude Code auto-memory files (`MEMORY.md`) after they are
+edited. It is not a self-evolving agent framework and does not build, run, or host
+agents itself -- it is a regression-testing CI gate that reacts to a file diff on a
+skill artifact that already changed, by a human or an agent. See "What is evolveguard,
+and why does it exist" above for the full definition.
 
 **Does evolveguard call an LLM?**
 No. Record and check are both fully static and deterministic -- see "How it works" above.
 
-**Can it catch a change in what an agent actually decides to do on a given prompt?**
-No, not directly. It catches changes in a skill's declared or inferred capability
-surface (the tools it's allowed or shown to use), which is a proxy for behavior, not a
-live trace of it. If you need to score actual agent runs, use Braintrust or agent-eval.
+**What's the core differentiator versus a general testing or eval tool?**
+It needs nothing hosted and nothing to integrate: point it at one `SKILL.md` file and a
+fixtures JSON, and `record`/`check` work immediately, with zero SDK integration and no
+live agent run. That is the tradeoff the "How it's different" table above documents --
+narrower scope than a general eval platform, in exchange for zero setup.
+
+**How does evolveguard compare to Braintrust?**
+Braintrust is a general LLM eval and observability platform: it needs SDK integration
+and an eval-definition step, and it scores real traces from a live agent run.
+evolveguard needs neither -- it parses the skill file itself and never calls an LLM. Use
+Braintrust if you're already logging traces and want statistical eval scoring across
+runs; use evolveguard if you want a pre-commit or CI check that a `SKILL.md`/`MEMORY.md`
+edit didn't silently widen what the skill can do. See the comparison table in "How it's
+different" above for the full breakdown, including how it compares to this same
+author's [agent-eval](https://github.com/RudrenduPaul/agent-eval).
 
 **Does it work with MEMORY.md files, which have no frontmatter?**
 Yes. A file with no frontmatter is parsed with an empty declared scope, so its capability
 surface comes entirely from static evidence found in the body text.
 
+**What platforms does it run on, and how do I install it?**
+The npm package requires Node.js >=20.12 (any OS Node supports) and installs with
+`npm install -g evolveguard`. The PyPI package requires Python >=3.9 and installs with
+`pip install evolveguard-cli`; both distributions are pure-library/CLI packages with no
+native bindings, so there is no OS-specific build step on either side.
+
+**What's a real limitation to know about before relying on this?**
+It only sees _declared or shown_ capability, not runtime behavior -- a skill could pass
+`check` and still behave differently on a given prompt in ways that don't touch its
+capability surface. The false-positive benchmark (see "False-positive rate" above) is
+also currently a small, hand-labeled corpus of 5 before/after pairs, not a large dataset,
+so treat the 0% figure as a starting measurement, not a statistical guarantee. The
+`mcp` subcommand is also documented but not implemented yet in either distribution.
+
 **Is this a general agent-evolution framework?**
 No. See "How it's different" above -- evolveguard deliberately does not build or host a
 self-evolving agent framework; it only tests skill/memory edits that already happened.
 
-**Is this published on npm or PyPI yet?**
-Not yet on either -- see [Status](#status) for the two separate, unrelated blockers.
-
-## Status
-
-This is a v0.1 release: a small, focused addition to the existing Claude Agent Skills
-ecosystem. It ships fully MIT-licensed with no proprietary tier, as two independent,
-equally first-class packages -- both fully built, tested, and publish-ready, blocked on
-two separate account-level issues, neither a code problem:
-
-- **PyPI (`evolveguard`, Python)** -- a genuine independent port, not a wrapper around
-  the Node binary (see [`python/README.md`](./python/README.md)). Wheel and sdist are
-  built, inspected, and verified end to end from a fresh venv install. The first
-  `twine upload` on this account is blocked by PyPI's own new-project-creation
-  anti-abuse throttle (`429 Too many new projects created`), confirmed across repeated
-  upload attempts. It will publish as soon as that throttle clears; no code change is
-  needed. Clone the repo and run `cd python && pip install -e .` in the meantime.
-- **npm (`evolveguard`, TypeScript)** -- `npm pack --dry-run` passes clean and
-  `package.json` metadata is publish-ready, but the actual `npm publish` is blocked on
-  a separate account-level constraint: this npm account's 2FA is security-key/
-  passkey-only, with no authenticator-app or OTP fallback configured, and npm currently
-  requires completing that 2FA challenge interactively to publish. Clone the repo and
-  run `npm run build && npm link` for the TypeScript CLI locally in the meantime.
+**Is evolveguard free to use, including commercially?**
+Yes. It's MIT-licensed with no proprietary tier or paid version -- see
+[LICENSE](LICENSE). You can use, modify, and redistribute it, including in commercial
+projects, under the standard MIT terms.
 
 ## Contributing
 
