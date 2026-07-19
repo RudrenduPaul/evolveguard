@@ -6,9 +6,8 @@ from __future__ import annotations
 
 from typing import List
 
+from . import __version__ as _VERSION
 from .types import Baseline, CapabilityChange, EvolveGuardReport
-
-_VERSION = "0.1.0"
 
 
 def format_record_result(baseline: Baseline, baseline_path: str) -> str:
