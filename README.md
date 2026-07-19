@@ -14,16 +14,16 @@ pip install evolveguard-cli
 
 ```bash
 # npm -- JavaScript/TypeScript CLI + library
-npm install -g evolveguard
+npm install -g evolveguard-cli
 ```
 
-> Both packages are live: `evolveguard-cli` on PyPI, `evolveguard` on npm (the npm
-> package has not been renamed to match the `-cli` convention yet -- see
-> [Status](#status) below). `npm install -g evolveguard` and
+> Both packages are live and named consistently: `evolveguard-cli` on PyPI and
+> `evolveguard-cli` on npm (renamed 2026-07-19 from the old plain `evolveguard`,
+> which is now deprecated). `npm install -g evolveguard-cli` and
 > `pip install evolveguard-cli` both work today; the demo GIFs below were recorded
 > against the published packages, not a local build.
 
-![Terminal recording: npm install -g evolveguard, then evolveguard --version and evolveguard --help, showing the published CLI's command list.](docs/demo.gif)
+![Terminal recording: npm install -g evolveguard-cli, then evolveguard --version and evolveguard --help, showing the published CLI's command list.](docs/demo.gif)
 
 ---
 
@@ -373,11 +373,11 @@ equally first-class packages:
   directly. The package was originally published under the name `evolveguard`; that
   older PyPI project is retired and no longer receives updates -- install
   `evolveguard-cli` instead.
-- **npm (`evolveguard`, TypeScript)** -- live at
-  [npmjs.com/package/evolveguard](https://www.npmjs.com/package/evolveguard).
-  `npm install -g evolveguard` installs it directly. The npm package has not yet been
-  renamed to `evolveguard-cli` to match the PyPI package's naming convention; the
-  installable name is still `evolveguard` for now.
+- **npm (`evolveguard-cli`, TypeScript)** -- live at
+  [npmjs.com/package/evolveguard-cli](https://www.npmjs.com/package/evolveguard-cli).
+  `npm install -g evolveguard-cli` installs it directly. Renamed 2026-07-19 from the
+  old plain `evolveguard`, which is now deprecated, to match the PyPI package's
+  naming convention.
 
 ## FAQ
 
@@ -414,7 +414,7 @@ surface comes entirely from static evidence found in the body text.
 
 **What platforms does it run on, and how do I install it?**
 The npm package requires Node.js >=20.12 (any OS Node supports) and installs with
-`npm install -g evolveguard`. The PyPI package requires Python >=3.9 and installs with
+`npm install -g evolveguard-cli`. The PyPI package requires Python >=3.9 and installs with
 `pip install evolveguard-cli`; both distributions are pure-library/CLI packages with no
 native bindings, so there is no OS-specific build step on either side.
 
