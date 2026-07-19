@@ -25,6 +25,8 @@ own declared and inferred capability surface; see
 https://github.com/RudrenduPaul/evolveguard for the canonical
 documentation, benchmarks, and the original TypeScript source.
 """
+from importlib.metadata import PackageNotFoundError, version as _pkg_version
+
 from .diff import diff_all, diff_fixture, diff_surface
 from .errors import EvolveGuardError, format_what_why_fix
 from .fixtures import load_fixtures
@@ -54,7 +56,13 @@ from .types import (
     Summary,
 )
 
-__version__ = "0.1.0"
+try:
+    __version__ = _pkg_version("evolveguard-cli")
+except PackageNotFoundError:
+    # Package is not installed (e.g. running from a source checkout without
+    # `pip install -e .`); fall back to a clearly-unresolved marker instead
+    # of a stale hardcoded string.
+    __version__ = "0.0.0+unknown"
 
 __all__ = [
     "parse_skill_file",

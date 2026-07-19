@@ -25,6 +25,7 @@ import os
 import sys
 from typing import List, Optional
 
+from . import __version__ as _VERSION
 from .diff import diff_all
 from .errors import EvolveGuardError, format_what_why_fix
 from .formatters import format_check_result, format_record_result, format_report
@@ -32,7 +33,6 @@ from .record import record_baseline
 from .replay import replay_skill
 from .report import read_baseline, read_report, write_baseline, write_report
 
-_VERSION = "0.1.0"
 _DEFAULT_REPORT_PATH = "./evolveguard-report.json"
 
 _DESCRIPTION = (
