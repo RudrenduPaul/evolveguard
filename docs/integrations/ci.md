@@ -9,11 +9,10 @@ file against it, failing the job on real exit code `1`.
 
 ## GitHub Actions -- Python CLI
 
-Not yet live on PyPI (see the project README's Status section for the real
-blocker -- a PyPI new-project anti-abuse throttle, not a code issue), so
-`pip install evolveguard` below will start working once that clears;
-`pip install git+https://github.com/RudrenduPaul/evolveguard.git#subdirectory=python`
-is the working install command in CI until then.
+Live on PyPI as `evolveguard-cli` (see the project README's Status
+section) -- `pip install evolveguard-cli` works today, in CI or anywhere
+else. To install from a repo checkout instead, use
+`pip install git+https://github.com/RudrenduPaul/evolveguard.git#subdirectory=python`.
 
 ```yaml
 name: evolveguard gate
@@ -27,7 +26,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install evolveguard
+      - run: pip install evolveguard-cli
       - name: Check skill for behavioral drift
         run: |
           evolveguard check skills/my-skill/SKILL.md \
@@ -63,12 +62,12 @@ git add skills/my-skill/.evolveguard-baseline.json
 
 ## GitHub Actions -- npm CLI
 
-Not yet published to npm (see the project README's Status section), so
-there is no bundled composite Action today. Once published, the
-equivalent step is:
+Live on npm as `evolveguard-cli` (see the project README's Status
+section); there is no bundled composite Action yet, but installing and
+running the CLI directly works today:
 
 ```yaml
-- run: npm install -g evolveguard
+- run: npm install -g evolveguard-cli
 - run: evolveguard check skills/my-skill/SKILL.md --report evolveguard-report.json
 ```
 
@@ -94,8 +93,8 @@ repos:
 ```
 
 This assumes `evolveguard` is already on `PATH` (installed via `pip
-install evolveguard` in your dev environment), or use `language: python` /
-`additional_dependencies: [evolveguard]` instead if you want pre-commit to
+install evolveguard-cli` in your dev environment), or use `language: python` /
+`additional_dependencies: [evolveguard-cli]` instead if you want pre-commit to
 manage the install itself.
 
 ## First-run bootstrap

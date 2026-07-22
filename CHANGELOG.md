@@ -1,10 +1,12 @@
 # Changelog
 
 All notable changes to this project are documented in this file. This changelog
-covers both distributions -- the npm package (`evolveguard`, JS/TS, not yet
-published) and the PyPI package (`evolveguard`, Python, not yet published) -- since
-they implement the same record/replay/diff pipeline; entries note which
-distribution they apply to.
+covers both distributions -- the npm package (`evolveguard-cli`, JS/TS, live)
+and the PyPI package (`evolveguard-cli`, Python, live) -- since they implement
+the same record/replay/diff pipeline; entries note which distribution they
+apply to. Both were renamed 2026-07-19 from the old plain `evolveguard`
+(entries below predating the rename refer to the package by its name at the
+time; the old `evolveguard` name is now deprecated on both registries).
 
 ## [Python 0.1.0] - 2026-07-17
 

@@ -4,29 +4,32 @@ evolveguard records a baseline of a Claude Agent Skill's own capability
 surface (the tools it's declared or shown to use), then re-derives that
 surface every time the skill file changes and diffs the result against the
 baseline. It ships as two packages against the same pipeline: an npm
-package (`evolveguard`, JavaScript/TypeScript) and a PyPI package
-(`evolveguard`, Python).
+package (`evolveguard-cli`, JavaScript/TypeScript) and a PyPI package
+(`evolveguard-cli`, Python).
 
 ## Install
 
 **npm (JS/TS CLI):**
 
-Not yet published -- the npm account's second factor is security-key/
-passkey only, with no authenticator-app or OTP fallback configured, which
-blocks the publish step independent of the code itself. Clone the repo and
-run `npm run build && npm link` for the TypeScript CLI in the meantime.
+```bash
+npm install -g evolveguard-cli
+```
+
+Live at [npmjs.com/package/evolveguard-cli](https://www.npmjs.com/package/evolveguard-cli).
+Renamed 2026-07-19 from the old plain `evolveguard`, which is now
+deprecated -- install `evolveguard-cli` instead. To install from source,
+clone the repo and run `npm run build && npm link`.
 
 **pip (Python library + CLI):**
 
 ```bash
-pip install evolveguard
+pip install evolveguard-cli
 ```
 
-Not yet live either, for a separate, unrelated reason: the first `twine
-upload` on this account is blocked by PyPI's own new-project-creation
-anti-abuse throttle (`429 Too many new projects created`), confirmed
-across repeated upload attempts -- not a code issue. Until that clears,
-clone the repo and run `cd python && pip install -e .` for the Python CLI.
+Live at [pypi.org/project/evolveguard-cli](https://pypi.org/project/evolveguard-cli/).
+The package was originally published under the plain name `evolveguard`;
+that older PyPI project is retired and no longer receives updates. To
+install from source, clone the repo and run `cd python && pip install -e .`.
 
 Neither install makes a network call at record/check time -- both are
 fully static, local tools by design (see "How it works" below).
@@ -47,7 +50,7 @@ Record a baseline against the "before" state of a real labeled case (a
 skill whose `filesystem` frontmatter is `read-only`):
 
 ```bash
-# Python CLI (after `pip install evolveguard`)
+# Python CLI (after `pip install evolveguard-cli`)
 evolveguard record fixtures/labeled-non-breaking-edits/case-03-add-write-capability/before/SKILL.md \
   --fixtures fixtures/labeled-non-breaking-edits/case-03-add-write-capability/fixtures.json \
   --baseline /tmp/eg-demo-baseline.json

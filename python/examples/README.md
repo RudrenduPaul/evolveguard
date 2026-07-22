@@ -7,7 +7,7 @@ Each numbered subdirectory is a real, runnable script against the actual
 required.
 
 Install the package first (editable install from this checkout, or `pip
-install evolveguard` from PyPI both work identically):
+install evolveguard-cli` from PyPI both work identically):
 
 ```bash
 cd python
