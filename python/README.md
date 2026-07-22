@@ -35,25 +35,24 @@ or with [uv](https://docs.astral.sh/uv/):
 uv add evolveguard-cli
 ```
 
-> **Not yet live on PyPI.** The package is fully built, tested, and
-> publish-ready (wheel + sdist built, inspected, and verified end to end
-> from a fresh venv install), but the first `twine upload` on this account
-> is currently blocked by PyPI's own new-project-creation anti-abuse
-> throttle (`429 Too many new projects created`), confirmed across
-> repeated upload attempts -- not a code or readiness issue. Until that
-> clears, clone the repo and install from source:
+> **Live on PyPI** at [pypi.org/project/evolveguard-cli](https://pypi.org/project/evolveguard-cli/).
+> The package was originally published under the plain name `evolveguard`;
+> that older PyPI project is retired and no longer receives updates --
+> install `evolveguard-cli` (above) instead. To install from source
+> anyway:
 >
 > ```bash
 > git clone https://github.com/RudrenduPaul/evolveguard.git
 > cd evolveguard/python && pip install -e .
 > ```
 
-**About the npm package:** `evolveguard` is also registered as an npm
-package name, but publishing it is currently blocked by a separate,
-unrelated account-level 2FA constraint (the npm account's second factor is
-security-key/passkey only, with no authenticator-app or OTP fallback
-configured). Clone the repo and run `npm run build && npm link` if you
-need the TypeScript CLI locally in the meantime.
+**About the npm package:** `evolveguard-cli` is also live on npm at
+[npmjs.com/package/evolveguard-cli](https://www.npmjs.com/package/evolveguard-cli)
+-- the TypeScript/JavaScript CLI and library, same record/replay/diff
+pipeline, same CLI flags. Renamed 2026-07-19 from the old plain
+`evolveguard`, which is now deprecated. Install it with
+`npm install -g evolveguard-cli`, or clone the repo and run `npm run build
+&& npm link` if you need it from source.
 
 ## Quickstart
 
@@ -133,8 +132,26 @@ runs fully offline in a pre-commit hook or CI job. This Python package is
 a genuine, independent port of the pipeline -- not a wrapper around the
 Node binary. See the
 [project README](https://github.com/RudrenduPaul/evolveguard#readme) for
-the fuller design writeup and the comparison against Braintrust and
-agent-eval.
+the fuller design writeup.
+
+## How it's different
+
+**Braintrust** is a general LLM eval and observability platform -- a
+strong choice if you're already logging traces from a live agent and want
+statistical eval scoring across runs, but it needs SDK integration and an
+eval-definition step per app. evolveguard needs neither: point it at one
+`SKILL.md` file and a fixtures JSON, and it works, with no live LLM calls.
+
+**[agent-eval](https://github.com/RudrenduPaul/agent-eval)** (this same
+author's other repo) answers a different, more general question: "did my
+agent's behavior change between two versions I define," for any agent,
+framework-agnostic, requiring you to stand up and run both versions
+yourself. evolveguard answers a narrower question triggered directly by a
+file diff on `SKILL.md`/`MEMORY.md`: did _this specific edit_ change the
+capability surface the baseline recorded, with nothing to stand up or run.
+See the
+[project README's comparison table](https://github.com/RudrenduPaul/evolveguard#how-its-different)
+for the full breakdown.
 
 ## CLI command reference
 
@@ -203,6 +220,40 @@ release: **0% false positives** (0 of 2 non-breaking cases flagged as
 drift), matching the npm package's own documented result on the same
 corpus. The corpus is small and will grow as more real skill edits are
 reported.
+
+## FAQ
+
+**What does this package do?**
+It detects capability drift in Claude Agent Skill files (`SKILL.md`) and
+Claude Code auto-memory files (`MEMORY.md`) after they're edited, by a
+human or an agent. It records a baseline of what a skill is declared or
+shown to use, then re-derives that surface after an edit and diffs the
+two, flagging drift with a specific reason instead of letting a broken
+edit ship silently.
+
+**How does this differ from the npm package?**
+Nothing behaviorally -- `evolveguard-cli` on PyPI is a genuine, independent
+Python port of the same TypeScript pipeline on npm (also `evolveguard-cli`),
+not a wrapper around the Node binary. Both parse the same skill-file
+schema, produce the same capability surface, and share baseline/report
+JSON files interchangeably. Pick whichever language fits your existing
+toolchain.
+
+**Is it safe to run against an untrusted or self-edited skill file?**
+Yes. evolveguard reads local files and never executes any of them -- no
+`eval`, no subprocess, no dynamic import of scan-target content. See
+"Security" below and [SECURITY.md](https://github.com/RudrenduPaul/evolveguard/blob/main/SECURITY.md)
+for the full scope notes.
+
+**Does it need API keys or make network calls?**
+No. `record` and `check` are both fully static and deterministic -- no LLM
+calls, no hosted service, no network access at any point in the pipeline.
+That's also why it runs fully offline in a pre-commit hook or CI job.
+
+**Does it work with `MEMORY.md` files, which have no frontmatter?**
+Yes. A file with no frontmatter is parsed with an empty declared scope, so
+its capability surface comes entirely from static evidence found in the
+body text.
 
 ## Contributing
 

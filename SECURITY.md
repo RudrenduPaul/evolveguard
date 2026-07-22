@@ -4,18 +4,21 @@ EvolveGuard reads local files you point it at (a `SKILL.md`/`MEMORY.md` file, a
 fixtures JSON file, and any hook scripts a skill's frontmatter references) and never
 executes any of them. It does not make network calls, does not run a live agent, and
 does not send data anywhere. This applies identically to both distributions -- the npm
-package (TypeScript) and the PyPI package (Python, `evolveguard` on PyPI). See the
+package (TypeScript) and the PyPI package (Python, `evolveguard-cli` on PyPI). See the
 README's "How it works" section for the full design.
 
 ## Supported versions
 
-| Package              | Version           | Supported |
-| -------------------- | ----------------- | --------- |
-| `evolveguard` (npm)  | not yet published | N/A       |
-| `evolveguard` (PyPI) | not yet published | N/A       |
+| Package                   | Version | Supported |
+| -------------------------- | ------- | --------- |
+| `evolveguard-cli` (npm)  | 0.1.x   | Yes       |
+| `evolveguard-cli` (PyPI) | 0.1.x   | Yes       |
 
 Both distributions are pre-1.0 and under active development. Security fixes land on
 the latest `0.1.x` release of each; there is no older supported line to backport to yet.
+The old plain `evolveguard` name on both registries is deprecated (renamed to
+`evolveguard-cli` 2026-07-19) and does not receive security updates -- install
+`evolveguard-cli` instead.
 
 ## Reporting a vulnerability
 

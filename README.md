@@ -315,7 +315,7 @@ See `src/evolveguard/index.ts` for the full exported surface: `parseSkillFile`,
 `recordBaseline`, `replaySkill`, `diffFixture`, `diffAll`, `diffSurface`, `writeBaseline`,
 `readBaseline`, `writeReport`, `readReport`, plus the shared `types.ts` interfaces.
 
-**Python** (`pip install evolveguard`):
+**Python** (`pip install evolveguard-cli`):
 
 ```python
 from evolveguard import record_baseline, replay_skill, diff_all, write_baseline, read_baseline

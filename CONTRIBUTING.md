@@ -2,7 +2,7 @@
 
 Thanks for looking at EvolveGuard. EvolveGuard ships two independently maintained,
 equally first-class distributions of the same record/replay/diff pipeline: an npm
-package (`evolveguard`, TypeScript, repo root) and a PyPI package (`evolveguard`,
+package (`evolveguard-cli`, TypeScript, repo root) and a PyPI package (`evolveguard-cli`,
 Python, `python/`). Both parse the same skill-file frontmatter schema and are expected
 to produce the same capability surface, and the same diff verdict, against the same
 skill file and fixtures. Please read this whole file before opening a PR -- which

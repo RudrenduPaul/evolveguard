@@ -19,7 +19,7 @@ console script; evolveguard/cli.py is a thin argument-parsing wrapper over
 these functions.
 
 This is the Python port of the evolveguard npm package
-(https://www.npmjs.com/package/evolveguard). Both distributions implement
+(https://www.npmjs.com/package/evolveguard-cli). Both distributions implement
 the same golden-transcript record/replay/diff pipeline against a skill's
 own declared and inferred capability surface; see
 https://github.com/RudrenduPaul/evolveguard for the canonical
