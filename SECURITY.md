@@ -9,8 +9,8 @@ README's "How it works" section for the full design.
 
 ## Supported versions
 
-| Package                   | Version | Supported |
-| -------------------------- | ------- | --------- |
+| Package                  | Version | Supported |
+| ------------------------ | ------- | --------- |
 | `evolveguard-cli` (npm)  | 0.1.x   | Yes       |
 | `evolveguard-cli` (PyPI) | 0.1.x   | Yes       |
 

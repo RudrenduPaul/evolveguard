@@ -288,4 +288,3 @@ exists yet for either distribution, so it isn't claimed here.
 ## License
 
 MIT, see [LICENSE](https://github.com/RudrenduPaul/evolveguard/blob/main/LICENSE).
-
