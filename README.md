@@ -1,14 +1,16 @@
 # evolveguard
 
+Catch behavioral drift when a Claude Agent Skill or a Claude Code `MEMORY.md` file edits itself, before the edit ships.
+
 [![CI](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml/badge.svg)](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/evolveguard-cli.svg)](https://www.npmjs.com/package/evolveguard-cli)
 [![PyPI version](https://img.shields.io/pypi/v/evolveguard-cli.svg)](https://pypi.org/project/evolveguard-cli/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20.12-brightgreen)](package.json)
-
-Catch behavioral drift when a Claude Agent Skill edits itself, before the edit ships.
+[![Python versions](https://img.shields.io/pypi/pyversions/evolveguard-cli.svg)](https://pypi.org/project/evolveguard-cli/)
 
 ```bash
-# PyPI -- Python CLI + library (genuine port)
+# PyPI -- Python CLI + library (genuine port, not a Node wrapper)
 pip install evolveguard-cli
 ```
 
@@ -19,25 +21,27 @@ npm install -g evolveguard-cli
 
 > Both packages are live and named consistently: `evolveguard-cli` on PyPI and
 > `evolveguard-cli` on npm (renamed 2026-07-19 from the old plain `evolveguard`,
-> which is now deprecated). `npm install -g evolveguard-cli` and
+> which is now deprecated on both registries). `npm install -g evolveguard-cli` and
 > `pip install evolveguard-cli` both work today; the demo GIFs below were recorded
 > against the published packages, not a local build.
 
 ![Terminal recording: npm install -g evolveguard-cli, then evolveguard --version and evolveguard --help, showing the published CLI's command list.](docs/demo.gif)
 
----
+## Contents
 
-Claude Code's Agent Skills can be authored by a human, or by an agent itself: `/skillify`
-turns a workflow into a `SKILL.md`, and the auto-memory system in this same environment
-writes `MEMORY.md` files that quietly change what an agent does in its next session.
-None of that gets a regression check today. A skill edit that breaks a working workflow
-looks exactly like a skill edit that fixes one, until someone notices the agent stopped
-doing something it used to do.
-
-evolveguard records a baseline of a skill's own capability surface (what tools it's
-declared or shown to use), then re-derives that surface every time the skill file
-changes and diffs the result against the baseline: same tool-call sequence, or a flagged
-drift with a specific reason.
+- [What it does](#what-it-does)
+- [Features](#features)
+- [Quickstart](#quickstart)
+- [CLI command reference](#cli-command-reference)
+- [Agent-native usage](#agent-native-usage)
+- [Library API](#library-api)
+- [How it compares](#how-it-compares)
+- [What is evolveguard, and why does it exist](#what-is-evolveguard-and-why-does-it-exist)
+- [Status](#status)
+- [FAQ](#faq)
+- [Contributing](#contributing)
+- [Security](#security)
+- [License](#license)
 
 ## What it does
 
@@ -60,57 +64,59 @@ exit code 1 (DRIFT blocks merge by default; override with --allow-drift)
 ```
 
 That's real output from this repo's own `fixtures/labeled-non-breaking-edits/case-03-add-write-capability/`
-test case, wired to `filesystem: read-only` -> `read-write` in the skill's frontmatter.
+test case, wired to `filesystem: read-only` becoming `read-write` in the skill's frontmatter.
+Reproduce it yourself: `evolveguard record` the `before/SKILL.md` in that folder against its
+`fixtures.json`, then `evolveguard check` the `after/SKILL.md`.
 
 ![Terminal recording: evolveguard record against the read-only version of the monorepo-scanner skill, then evolveguard check after the skill is edited to add a filesystem write, showing a DRIFT result and exit code 1.](docs/usage.gif)
 
-## How it works
+## Features
 
-evolveguard does not run a live LLM agent, and it does not replay a real conversation
-transcript. It is a static, deterministic tool by design:
+**Static analysis, not a live agent run.** `record` parses a skill file's YAML
+frontmatter (declared `tools`, `network`, `filesystem`, `scope`, and any bundled
+`hooks`), scans the skill's body text and hook scripts for evidence of network calls
+or filesystem writes, and combines both into a capability surface. `check` re-parses
+the edited file with the same logic and diffs the result. Neither command runs
+`eval`, shells out to a subprocess, or executes a skill's hook scripts, in either the
+TypeScript or the Python distribution.
 
-1. **`record`** parses a skill file's YAML frontmatter (declared `tools`, `network`,
-   `filesystem`, `scope`, and any bundled `hooks`), scans the skill's body text and any
-   hook scripts for static evidence of network calls or filesystem writes, and combines
-   both into a **capability surface** -- the set of tools the skill is declared or shown
-   to use. Each fixture's `expectedToolCalls` filters that surface down to the tools the
-   fixture author says it cares about; the result is the recorded baseline.
-2. **`check`** re-reads the (possibly edited) skill file, re-derives its capability
-   surface with the exact same logic, and re-filters it per fixture.
-3. **`diff`** compares baseline vs. current per fixture (PASS if the tool set and scopes
-   match, DRIFT with a specific reason otherwise), and separately diffs the _whole_
-   capability surface so a new capability that no fixture's `expectedToolCalls` happened
-   to cover still gets caught, instead of silently passing.
+**Two-level diffing catches drift a single fixture can miss.** Each fixture's
+`expectedToolCalls` filters the recorded capability surface down to what that fixture
+cares about, but `check` also diffs the skill's *whole* capability surface separately.
+A new capability that no fixture's `expectedToolCalls` happens to cover still shows
+up as a `surfaceChanges` entry instead of passing silently. Confirmed against this
+repo's own `case-04-scope-widened` fixture, where a `fs.write` scope widens from
+`./workspace/**` to `./**`.
 
-evolveguard detects changes in what a skill is _declared or shown_ to be capable of. It
-can't tell you whether a live agent run would actually behave differently on a given
-prompt -- that's a real, intentional scope limit. The tradeoff: it just needs a
-`SKILL.md` file and a fixtures file, with nothing hosted and no SDK to integrate against,
-which is also why it runs fully offline in a pre-commit hook or CI job.
+**0% false positives on a labeled corpus, reproducibly.** `npx vitest run
+src/evolveguard/benchmark.test.ts` runs the record/check/diff pipeline against
+`fixtures/labeled-non-breaking-edits/`: 2 cases hand-labeled non-breaking (a wording
+tweak, a typo fix) and 3 labeled breaking (a new write capability, a widened scope, a
+hook script gaining a network call). As of this commit, both non-breaking cases stay
+clean: 0 of 2 flagged as drift. The corpus is small and grows as more real skill edits
+get reported.
 
-## How it's different
+**A path-traversal guard on hook scripts.** A skill's declared hook paths are resolved
+and validated against that skill's own directory before being read, including a
+symlink-escape re-check that runs after the lexical containment check passes
+(`src/evolveguard/paths.ts` and `python/src/evolveguard/paths.py`).
 
-**Braintrust** is a general LLM eval and observability platform. It is a strong choice
-if you're already logging traces from a live agent and want statistical eval scoring
-across runs, but it needs SDK integration and an eval-definition step per app. evolveguard
-needs neither: point it at one `SKILL.md` file and a fixtures JSON, and it works.
+**Every subcommand supports `--json`.** `record`, `check`, and `report` all take a
+`--json` flag and return a stable `schemaVersion`-tagged structure, so a coding agent
+can call any of them as a subprocess and parse the result directly.
 
-**[agent-eval](https://github.com/RudrenduPaul/agent-eval)** (this same author's other
-repo) answers a different, more general question: "did my agent's behavior change
-between two versions I define," for any agent, framework-agnostic, requiring you to
-stand up and run both versions yourself. evolveguard answers a narrower, structurally
-different question, triggered directly by a file diff on `SKILL.md`/`MEMORY.md`: did
-_this specific edit_ change the capability surface the baseline recorded. It parses the
-skill artifact itself and never asks you to define or run anything live.
+**Two independently maintained, format-compatible distributions.** The npm package
+(TypeScript, repo root) and the PyPI package (Python, `python/`) parse the same
+frontmatter schema and produce byte-compatible baseline and report JSON. A baseline
+recorded with one CLI can be checked with the other; see
+[docs/concepts.md](./docs/concepts.md#file-formats-and-cross-distribution-compatibility)
+for the file-format details.
 
-|                | evolveguard                                  | Braintrust                         | agent-eval                        |
-| -------------- | -------------------------------------------- | ---------------------------------- | --------------------------------- |
-| Setup          | `record` + `check` against one file          | SDK integration, eval definitions  | Define and run two agent versions |
-| Trigger        | `SKILL.md`/`MEMORY.md` file diff             | Manual eval run                    | Manual A/B run                    |
-| Mechanism      | Static capability-surface diff               | Live-run trace scoring             | Statistical behavior comparison   |
-| Hosted infra   | None                                         | Hosted platform                    | None                              |
-| Live LLM calls | None                                         | Yes (scores real runs)             | Yes (runs both versions)          |
-| Best for       | Self-edited Claude Agent Skills specifically | General LLM app eval/observability | Any agent, generic A/B regression |
+evolveguard detects changes in what a skill is *declared or shown* to be capable of.
+It does not run a live LLM agent or replay a real conversation transcript, so it
+cannot tell you whether an agent would actually behave differently on a given prompt.
+That is an intentional scope limit, and also why it needs nothing hosted and runs
+fully offline in a pre-commit hook or CI job.
 
 ## Quickstart
 
@@ -139,13 +145,14 @@ expected to touch:
 ]
 ```
 
-`expectedToolCalls` is optional -- omit it and the fixture is treated as exercising the
+`expectedToolCalls` is optional; omit it and the fixture is treated as exercising the
 skill's entire capability surface. `scopeMatches` (a glob) narrows a tool to a specific
 filesystem scope, e.g. `{ "tool": "fs.write", "scopeMatches": "./workspace/**" }`.
 
 ## CLI command reference
 
-Generated from the actual `--help` output of the built CLI.
+Generated from the actual `--help` output of the installed CLI (verified against both
+the npm and PyPI builds; flags and defaults are identical across distributions).
 
 <details>
 <summary><code>evolveguard --help</code></summary>
@@ -250,6 +257,11 @@ Options:
 was found (pass `--allow-drift` to still exit 0 while still reporting it), `2` a usage
 error or a file that failed to parse.
 
+Note: the npm build's `evolveguard --version` currently prints `0.1.0` even though the
+published package is at a newer `package.json` version; the PyPI build reads its version
+from installed package metadata and reports it correctly. Use the badges above, not
+`--version`, if you need the exact currently-published version number of the npm package.
+
 ## Agent-native usage
 
 Every subcommand supports `--json` for structured output an agent can parse directly:
@@ -277,16 +289,16 @@ evolveguard check ./SKILL.md --json
 }
 ```
 
-`evolveguard mcp` is documented but not implemented yet -- see the CLI reference above.
-Until it ships, call `record`/`check`/`report --json` directly as a subprocess from your
+`evolveguard mcp` is documented but not implemented yet, in either distribution. Until
+it ships, call `record`/`check`/`report --json` directly as a subprocess from your
 coding agent.
 
 ## Library API
 
-evolveguard also exports a programmatic API for the same pipeline, if you'd rather
-integrate it into your own tooling than shell out to the CLI. Both distributions
-expose the same functions and the same JSON-compatible file format -- a baseline
-recorded with one CLI can be checked with the other (see
+evolveguard also exports a programmatic API for the same pipeline, for teams who want
+to integrate it into their own tooling instead of shelling out to the CLI. Both
+distributions expose the same functions and the same JSON-compatible file format; a
+baseline recorded with one CLI can be checked with the other (see
 [docs/concepts.md](./docs/concepts.md#file-formats-and-cross-distribution-compatibility)).
 
 **TypeScript:**
@@ -333,20 +345,30 @@ report = diff_all(saved, replay)
 See [`python/README.md`](./python/README.md) for the Python-specific walkthrough and
 the same exported surface under `evolveguard/__init__.py`.
 
-## False-positive rate
+## How it compares
 
-No accuracy claim ships without the command that produced it. Run:
+**Braintrust** is a general LLM eval and observability platform. It is a strong choice
+if you are already logging traces from a live agent and want statistical eval scoring
+across runs, but it needs SDK integration and an eval-definition step per app.
+evolveguard needs neither: point it at one `SKILL.md` file and a fixtures JSON, and it
+works.
 
-```bash
-npx vitest run src/evolveguard/benchmark.test.ts
-```
+**[agent-eval](https://github.com/RudrenduPaul/agent-eval)** (this same author's other
+repo) answers a different question: whether an agent's behavior changed between two
+versions you define, for any agent, framework-agnostic, by running both versions
+yourself and computing a p-value on the difference. evolveguard is triggered directly
+by a file diff on `SKILL.md`/`MEMORY.md` and answers whether *this specific edit*
+changed the capability surface a baseline recorded. It parses the skill artifact
+itself and never asks you to define or run anything live.
 
-against `fixtures/labeled-non-breaking-edits/` -- a small, hand-labeled corpus of real
-before/after `SKILL.md` pairs (wording tweaks and typo fixes labeled non-breaking; a
-filesystem-scope widen, a new write capability, and a hook script gaining a network call
-labeled breaking). As of this commit: **0% false positives** (0 of 2 non-breaking cases
-flagged as drift). The corpus is small and will grow as more real skill edits are
-reported; see `fixtures/labeled-non-breaking-edits/README.md`.
+|                | evolveguard                                  | Braintrust                         | agent-eval                         |
+| -------------- | --------------------------------------------- | ----------------------------------- | ----------------------------------- |
+| Setup          | `record` + `check` against one file           | SDK integration, eval definitions   | Define and run two agent versions   |
+| Trigger        | `SKILL.md`/`MEMORY.md` file diff              | Manual eval run                     | Manual A/B run                      |
+| Mechanism      | Static capability-surface diff                | Live-run trace scoring              | Statistical behavior comparison (p-value) |
+| Hosted infra   | None                                          | Hosted platform                     | None                                 |
+| Live LLM calls | None                                          | Yes (scores real runs)              | Yes (runs both versions)             |
+| Best for       | Self-edited Claude Agent Skills specifically  | General LLM app eval/observability  | Any agent, generic A/B regression    |
 
 ## What is evolveguard, and why does it exist
 
@@ -366,14 +388,14 @@ This is a v0.1 release: a small, focused addition to the existing Claude Agent S
 ecosystem. It ships fully MIT-licensed with no proprietary tier, as two independent,
 equally first-class packages:
 
-- **PyPI (`evolveguard-cli`, Python)** -- live at
+- **PyPI (`evolveguard-cli`, Python)**, live at
   [pypi.org/project/evolveguard-cli](https://pypi.org/project/evolveguard-cli/). A
   genuine independent port, not a wrapper around the Node binary (see
   [`python/README.md`](./python/README.md)). `pip install evolveguard-cli` installs it
   directly. The package was originally published under the name `evolveguard`; that
-  older PyPI project is retired and no longer receives updates -- install
+  older PyPI project is retired and no longer receives updates, install
   `evolveguard-cli` instead.
-- **npm (`evolveguard-cli`, TypeScript)** -- live at
+- **npm (`evolveguard-cli`, TypeScript)**, live at
   [npmjs.com/package/evolveguard-cli](https://www.npmjs.com/package/evolveguard-cli).
   `npm install -g evolveguard-cli` installs it directly. Renamed 2026-07-19 from the
   old plain `evolveguard`, which is now deprecated, to match the PyPI package's
@@ -385,63 +407,70 @@ equally first-class packages:
 A command-line tool and library that detects capability drift in Claude Agent Skill
 files (`SKILL.md`) and Claude Code auto-memory files (`MEMORY.md`) after they are
 edited. It is not a self-evolving agent framework and does not build, run, or host
-agents itself -- it is a regression-testing CI gate that reacts to a file diff on a
+agents itself. It is a regression-testing CI gate that reacts to a file diff on a
 skill artifact that already changed, by a human or an agent. See "What is evolveguard,
 and why does it exist" above for the full definition.
 
 **Does evolveguard call an LLM?**
-No. Record and check are both fully static and deterministic -- see "How it works" above.
+No. Record and check are both fully static and deterministic; see "Features" above for
+exactly what each command parses and scans.
 
 **What's the core differentiator versus a general testing or eval tool?**
 It needs nothing hosted and nothing to integrate: point it at one `SKILL.md` file and a
 fixtures JSON, and `record`/`check` work immediately, with zero SDK integration and no
-live agent run. That is the tradeoff the "How it's different" table above documents --
+live agent run. That is the tradeoff the "How it compares" table above documents:
 narrower scope than a general eval platform, in exchange for zero setup.
 
 **How does evolveguard compare to Braintrust?**
-Braintrust is a general LLM eval and observability platform: it needs SDK integration
+Braintrust is a general LLM eval and observability platform that needs SDK integration
 and an eval-definition step, and it scores real traces from a live agent run.
-evolveguard needs neither -- it parses the skill file itself and never calls an LLM. Use
-Braintrust if you're already logging traces and want statistical eval scoring across
-runs; use evolveguard if you want a pre-commit or CI check that a `SKILL.md`/`MEMORY.md`
-edit didn't silently widen what the skill can do. See the comparison table in "How it's
-different" above for the full breakdown, including how it compares to this same
-author's [agent-eval](https://github.com/RudrenduPaul/agent-eval).
+evolveguard needs neither; it parses the skill file itself and never calls an LLM. Use
+Braintrust if you are already logging traces and want statistical eval scoring across
+runs. Use evolveguard if you want a pre-commit or CI check that a `SKILL.md`/`MEMORY.md`
+edit did not silently widen what the skill can do. See the comparison table in "How it
+compares" above for the full breakdown, including how it compares to this same author's
+[agent-eval](https://github.com/RudrenduPaul/agent-eval).
 
-**Does it work with MEMORY.md files, which have no frontmatter?**
+**Does it work with `MEMORY.md` files, which have no frontmatter?**
 Yes. A file with no frontmatter is parsed with an empty declared scope, so its capability
 surface comes entirely from static evidence found in the body text.
 
 **What platforms does it run on, and how do I install it?**
 The npm package requires Node.js >=20.12 (any OS Node supports) and installs with
-`npm install -g evolveguard-cli`. The PyPI package requires Python >=3.9 and installs with
-`pip install evolveguard-cli`; both distributions are pure-library/CLI packages with no
-native bindings, so there is no OS-specific build step on either side.
+`npm install -g evolveguard-cli`. The PyPI package requires Python >=3.9 and installs
+with `pip install evolveguard-cli`. Both distributions are pure-library/CLI packages
+with no native bindings, so there is no OS-specific build step on either side.
 
 **What's a real limitation to know about before relying on this?**
-It only sees _declared or shown_ capability, not runtime behavior -- a skill could pass
-`check` and still behave differently on a given prompt in ways that don't touch its
-capability surface. The false-positive benchmark (see "False-positive rate" above) is
-also currently a small, hand-labeled corpus of 5 before/after pairs, not a large dataset,
-so treat the 0% figure as a starting measurement, not a statistical guarantee. The
-`mcp` subcommand is also documented but not implemented yet in either distribution.
+It only sees *declared or shown* capability, not runtime behavior. A skill could pass
+`check` and still behave differently on a given prompt in ways that do not touch its
+capability surface. The false-positive benchmark (see "Features" above) is also
+currently a small, hand-labeled corpus of 5 before/after pairs, not a large dataset, so
+treat the 0% figure as a starting measurement, not a statistical guarantee. The `mcp`
+subcommand is also documented but not implemented yet in either distribution, and the
+npm build's `evolveguard --version` output currently lags the package's real published
+version (see "CLI command reference" above).
 
 **Is this a general agent-evolution framework?**
-No. See "How it's different" above -- evolveguard deliberately does not build or host a
+No. See "How it compares" above. evolveguard deliberately does not build or host a
 self-evolving agent framework; it only tests skill/memory edits that already happened.
 
 **Is evolveguard free to use, including commercially?**
-Yes. It's MIT-licensed with no proprietary tier or paid version -- see
+Yes. It is MIT-licensed with no proprietary tier or paid version; see
 [LICENSE](LICENSE). You can use, modify, and redistribute it, including in commercial
 projects, under the standard MIT terms.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md). Every change lands with tests in both
+distributions; a change to the frontmatter schema, the capability-surface derivation,
+or the diff verdict logic must be made in both `src/evolveguard/` (TypeScript) and
+`python/src/evolveguard/` (Python), with equivalent coverage added to both suites.
 
 ## Security
 
-See [SECURITY.md](SECURITY.md).
+See [SECURITY.md](SECURITY.md). evolveguard reads local files you point it at and
+never executes any of them; it makes no network calls and does not run a live agent.
 
 ## License
 
