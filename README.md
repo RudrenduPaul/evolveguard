@@ -9,6 +9,8 @@ Catch behavioral drift when a Claude Agent Skill or a Claude Code `MEMORY.md` fi
 [![Node](https://img.shields.io/badge/node-%3E%3D20.12-brightgreen)](package.json)
 [![Python versions](https://img.shields.io/pypi/pyversions/evolveguard-cli.svg)](https://pypi.org/project/evolveguard-cli/)
 
+![Terminal recording: npm install -g evolveguard-cli, then evolveguard --version and evolveguard --help, showing the published CLI's command list.](docs/demo.gif)
+
 ```bash
 # PyPI -- Python CLI + library (genuine port, not a Node wrapper)
 pip install evolveguard-cli
@@ -24,8 +26,6 @@ npm install -g evolveguard-cli
 > which is now deprecated on both registries). `npm install -g evolveguard-cli` and
 > `pip install evolveguard-cli` both work today; the demo GIFs below were recorded
 > against the published packages, not a local build.
-
-![Terminal recording: npm install -g evolveguard-cli, then evolveguard --version and evolveguard --help, showing the published CLI's command list.](docs/demo.gif)
 
 ## Contents
 
