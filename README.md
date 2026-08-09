@@ -88,6 +88,8 @@ up as a `surfaceChanges` entry instead of passing silently. Confirmed against th
 repo's own `case-04-scope-widened` fixture, where a `fs.write` scope widens from
 `./workspace/**` to `./**`.
 
+![Terminal recording: evolveguard check --json against the case-04-scope-widened fixture, showing the widened fs.write scope surfaced in the JSON surfaceChanges output.](docs/demo-3-scope-widened-json.gif)
+
 **0% false positives on a labeled corpus, reproducibly.** `npx vitest run
 src/evolveguard/benchmark.test.ts` runs the record/check/diff pipeline against
 `fixtures/labeled-non-breaking-edits/`: 2 cases hand-labeled non-breaking (a wording
