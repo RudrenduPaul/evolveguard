@@ -5,6 +5,7 @@ manifests and Claude Code auto-memory `MEMORY.md` files -- catching
 behavioral drift before an edit ships.
 
 [![PyPI version](https://img.shields.io/pypi/v/evolveguard-cli.svg)](https://pypi.org/project/evolveguard-cli/)
+[![npm version](https://img.shields.io/npm/v/evolveguard-cli.svg)](https://www.npmjs.com/package/evolveguard-cli)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/RudrenduPaul/evolveguard/blob/main/LICENSE)
 [![Python versions](https://img.shields.io/pypi/pyversions/evolveguard-cli.svg)](https://pypi.org/project/evolveguard-cli/)
 [![CI](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml/badge.svg)](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml)
