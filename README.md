@@ -82,7 +82,7 @@ TypeScript or the Python distribution.
 
 **Two-level diffing catches drift a single fixture can miss.** Each fixture's
 `expectedToolCalls` filters the recorded capability surface down to what that fixture
-cares about, but `check` also diffs the skill's *whole* capability surface separately.
+cares about, but `check` also diffs the skill's _whole_ capability surface separately.
 A new capability that no fixture's `expectedToolCalls` happens to cover still shows
 up as a `surfaceChanges` entry instead of passing silently. Confirmed against this
 repo's own `case-04-scope-widened` fixture, where a `fs.write` scope widens from
@@ -114,7 +114,7 @@ recorded with one CLI can be checked with the other; see
 [docs/concepts.md](./docs/concepts.md#file-formats-and-cross-distribution-compatibility)
 for the file-format details.
 
-evolveguard detects changes in what a skill is *declared or shown* to be capable of.
+evolveguard detects changes in what a skill is _declared or shown_ to be capable of.
 It does not run a live LLM agent or replay a real conversation transcript, so it
 cannot tell you whether an agent would actually behave differently on a given prompt.
 That is an intentional scope limit, and also why it needs nothing hosted and runs
@@ -359,18 +359,18 @@ works.
 repo) answers a different question: whether an agent's behavior changed between two
 versions you define, for any agent, framework-agnostic, by running both versions
 yourself and computing a p-value on the difference. evolveguard is triggered directly
-by a file diff on `SKILL.md`/`MEMORY.md` and answers whether *this specific edit*
+by a file diff on `SKILL.md`/`MEMORY.md` and answers whether _this specific edit_
 changed the capability surface a baseline recorded. It parses the skill artifact
 itself and never asks you to define or run anything live.
 
-|                | evolveguard                                  | Braintrust                         | agent-eval                         |
-| -------------- | --------------------------------------------- | ----------------------------------- | ----------------------------------- |
-| Setup          | `record` + `check` against one file           | SDK integration, eval definitions   | Define and run two agent versions   |
-| Trigger        | `SKILL.md`/`MEMORY.md` file diff              | Manual eval run                     | Manual A/B run                      |
-| Mechanism      | Static capability-surface diff                | Live-run trace scoring              | Statistical behavior comparison (p-value) |
-| Hosted infra   | None                                          | Hosted platform                     | None                                 |
-| Live LLM calls | None                                          | Yes (scores real runs)              | Yes (runs both versions)             |
-| Best for       | Self-edited Claude Agent Skills specifically  | General LLM app eval/observability  | Any agent, generic A/B regression    |
+|                | evolveguard                                  | Braintrust                         | agent-eval                                |
+| -------------- | -------------------------------------------- | ---------------------------------- | ----------------------------------------- |
+| Setup          | `record` + `check` against one file          | SDK integration, eval definitions  | Define and run two agent versions         |
+| Trigger        | `SKILL.md`/`MEMORY.md` file diff             | Manual eval run                    | Manual A/B run                            |
+| Mechanism      | Static capability-surface diff               | Live-run trace scoring             | Statistical behavior comparison (p-value) |
+| Hosted infra   | None                                         | Hosted platform                    | None                                      |
+| Live LLM calls | None                                         | Yes (scores real runs)             | Yes (runs both versions)                  |
+| Best for       | Self-edited Claude Agent Skills specifically | General LLM app eval/observability | Any agent, generic A/B regression         |
 
 ## What is evolveguard, and why does it exist
 
@@ -444,7 +444,7 @@ with `pip install evolveguard-cli`. Both distributions are pure-library/CLI pack
 with no native bindings, so there is no OS-specific build step on either side.
 
 **What's a real limitation to know about before relying on this?**
-It only sees *declared or shown* capability, not runtime behavior. A skill could pass
+It only sees _declared or shown_ capability, not runtime behavior. A skill could pass
 `check` and still behave differently on a given prompt in ways that do not touch its
 capability surface. The false-positive benchmark (see "Features" above) is also
 currently a small, hand-labeled corpus of 5 before/after pairs, not a large dataset, so

@@ -13,7 +13,7 @@ time; the old `evolveguard` name is now deprecated on both registries).
 ### Fixed
 
 - `evolveguard --version` and every human-readable command header (`EvolveGuard v...
-  -- Baseline Recorded/Regression Check/Report`) printed a hardcoded `0.1.0` on the
+-- Baseline Recorded/Regression Check/Report`) printed a hardcoded `0.1.0` on the
   npm/TypeScript CLI, unchanged since the initial release even though the package
   itself had shipped 0.1.1, 0.1.2, and 0.1.3 -- confirmed live via a clean
   `npm install -g evolveguard-cli@latest` and running `--version`. Root cause: `cli.ts`
