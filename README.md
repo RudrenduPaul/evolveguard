@@ -52,7 +52,7 @@ evolveguard check ./SKILL.md
 ```
 
 ```
-EvolveGuard v0.1.0 -- Regression Check
+EvolveGuard v0.1.4 -- Regression Check
 skill: monorepo-scanner  baseline: 2026-07-15  fixtures: 1
 
 [DRIFT] fixture: "scan a monorepo"  new tool call: fs.write (baseline had none)
