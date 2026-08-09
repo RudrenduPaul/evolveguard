@@ -67,7 +67,7 @@ evolveguard check fixtures/labeled-non-breaking-edits/case-03-add-write-capabili
 Real output:
 
 ```
-EvolveGuard v0.1.0 -- Regression Check
+EvolveGuard v0.1.4 -- Regression Check
 skill: monorepo-scanner  baseline: 2026-07-17  fixtures: 1
 
 [DRIFT] fixture: "scan a monorepo"  new tool call: fs.write (baseline had none)
@@ -91,7 +91,7 @@ evolveguard check fixtures/labeled-non-breaking-edits/case-01-wording-tweak/afte
 Real output:
 
 ```
-EvolveGuard v0.1.0 -- Regression Check
+EvolveGuard v0.1.4 -- Regression Check
 skill: pr-summarizer  baseline: 2026-07-17  fixtures: 1
 
 [PASS]  fixture: "summarize a PR diff"  tool-call sequence unchanged
