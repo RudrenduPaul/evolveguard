@@ -8,6 +8,21 @@ apply to. Both were renamed 2026-07-19 from the old plain `evolveguard`
 (entries below predating the rename refer to the package by its name at the
 time; the old `evolveguard` name is now deprecated on both registries).
 
+## 0.1.4 -- 2026-08-08 (npm only)
+
+### Fixed
+
+- `evolveguard --version` and every human-readable command header (`EvolveGuard v...
+  -- Baseline Recorded/Regression Check/Report`) printed a hardcoded `0.1.0` on the
+  npm/TypeScript CLI, unchanged since the initial release even though the package
+  itself had shipped 0.1.1, 0.1.2, and 0.1.3 -- confirmed live via a clean
+  `npm install -g evolveguard-cli@latest` and running `--version`. Root cause: `cli.ts`
+  and `formatters.ts` each declared their own `const VERSION = '0.1.0'` literal instead
+  of reading the installed package's actual version. Both now read the version from
+  `package.json` at runtime (`src/evolveguard-cli/version.ts`), matching the pattern
+  already used on the Python/PyPI side (`importlib.metadata`), so this can't drift on
+  future releases. The PyPI package was not affected and was not re-released.
+
 ## [Python 0.1.0] - 2026-07-17
 
 Python port complete, packaged (wheel + sdist built, inspected, and verified end to

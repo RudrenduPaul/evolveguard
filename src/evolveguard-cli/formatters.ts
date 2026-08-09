@@ -1,6 +1,7 @@
 import type { Baseline, EvolveGuardReport } from '../evolveguard/types';
+import { getVersion } from './version';
 
-const VERSION = '0.1.0';
+const VERSION = getVersion();
 
 export function formatRecordResult(baseline: Baseline, baselinePath: string): string {
   const lines: string[] = [];

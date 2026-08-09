@@ -12,8 +12,9 @@ import {
 } from '../evolveguard/report/index';
 import { EvolveGuardError, formatWhatWhyFix } from '../evolveguard/errors';
 import { formatRecordResult, formatCheckResult, formatReport } from './formatters';
+import { getVersion } from './version';
 
-const VERSION = '0.1.0';
+const VERSION = getVersion();
 const DEFAULT_REPORT_PATH = './evolveguard-report.json';
 
 function defaultBaselinePath(skillPath: string): string {
