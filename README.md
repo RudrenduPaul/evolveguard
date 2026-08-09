@@ -1,13 +1,22 @@
 # evolveguard
 
-Catch behavioral drift when a Claude Agent Skill or a Claude Code `MEMORY.md` file edits itself, before the edit ships.
-
 [![CI](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml/badge.svg)](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/evolveguard-cli.svg)](https://www.npmjs.com/package/evolveguard-cli)
 [![PyPI version](https://img.shields.io/pypi/v/evolveguard-cli.svg)](https://pypi.org/project/evolveguard-cli/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20.12-brightgreen)](package.json)
 [![Python versions](https://img.shields.io/pypi/pyversions/evolveguard-cli.svg)](https://pypi.org/project/evolveguard-cli/)
+
+<p align="center">
+<a href="#what-it-does">What it does</a> •
+<a href="#quickstart">Quickstart</a> •
+<a href="#cli-command-reference">CLI reference</a> •
+<a href="#agent-native-usage">Agent-native usage</a> •
+<a href="#how-it-compares">How it compares</a> •
+<a href="#faq">FAQ</a>
+</p>
+
+Catch behavioral drift when a Claude Agent Skill or a Claude Code `MEMORY.md` file edits itself, before the edit ships.
 
 ![Terminal recording: npm install -g evolveguard-cli, then evolveguard --version and evolveguard --help, showing the published CLI's command list.](docs/demo.gif)
 
@@ -21,27 +30,12 @@ pip install evolveguard-cli
 npm install -g evolveguard-cli
 ```
 
+> [!NOTE]
 > Both packages are live and named consistently: `evolveguard-cli` on PyPI and
 > `evolveguard-cli` on npm (renamed 2026-07-19 from the old plain `evolveguard`,
 > which is now deprecated on both registries). `npm install -g evolveguard-cli` and
 > `pip install evolveguard-cli` both work today; the demo GIFs below were recorded
 > against the published packages, not a local build.
-
-## Contents
-
-- [What it does](#what-it-does)
-- [Features](#features)
-- [Quickstart](#quickstart)
-- [CLI command reference](#cli-command-reference)
-- [Agent-native usage](#agent-native-usage)
-- [Library API](#library-api)
-- [How it compares](#how-it-compares)
-- [What is evolveguard, and why does it exist](#what-is-evolveguard-and-why-does-it-exist)
-- [Status](#status)
-- [FAQ](#faq)
-- [Contributing](#contributing)
-- [Security](#security)
-- [License](#license)
 
 ## What it does
 
@@ -259,10 +253,11 @@ Options:
 was found (pass `--allow-drift` to still exit 0 while still reporting it), `2` a usage
 error or a file that failed to parse.
 
-Note: the npm build's `evolveguard --version` currently prints `0.1.0` even though the
-published package is at a newer `package.json` version; the PyPI build reads its version
-from installed package metadata and reports it correctly. Use the badges above, not
-`--version`, if you need the exact currently-published version number of the npm package.
+> [!WARNING]
+> The npm build's `evolveguard --version` currently prints `0.1.0` even though the
+> published package is at a newer `package.json` version; the PyPI build reads its version
+> from installed package metadata and reports it correctly. Use the badges above, not
+> `--version`, if you need the exact currently-published version number of the npm package.
 
 ## Agent-native usage
 
@@ -291,9 +286,10 @@ evolveguard check ./SKILL.md --json
 }
 ```
 
-`evolveguard mcp` is documented but not implemented yet, in either distribution. Until
-it ships, call `record`/`check`/`report --json` directly as a subprocess from your
-coding agent.
+> [!WARNING]
+> `evolveguard mcp` is documented but not implemented yet, in either distribution. Until
+> it ships, call `record`/`check`/`report --json` directly as a subprocess from your
+> coding agent.
 
 ## Library API
 
