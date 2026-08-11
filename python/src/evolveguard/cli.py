@@ -128,7 +128,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser(
         "mcp",
-        help="[coming soon] Expose record/check/report as MCP tools for a coding agent to call mid-session",
+        help="Start the MCP server (stdio transport) exposing record/check/report as MCP "
+        "tools for a coding agent to call mid-session. Requires the `mcp` extra.",
     )
 
     return parser
@@ -221,10 +222,20 @@ def run_cli(argv: List[str]) -> int:
     if args.command == "report":
         return _run_report(args)
     if args.command == "mcp":
-        sys.stdout.write(
-            "evolveguard mcp is not implemented yet. Use `evolveguard record`/`check`/"
-            "`report --json` directly from an agent for now.\n"
-        )
+        try:
+            from .mcp_server import main as _run_mcp_server
+        except ImportError:
+            sys.stderr.write(
+                format_what_why_fix(
+                    "evolveguard mcp requires the `mcp` extra, which is not installed.",
+                    "The MCP server depends on the `mcp` package, an optional dependency "
+                    "(not installed by a plain `pip install evolveguard-cli`).",
+                    'Install it with: pip install "evolveguard-cli[mcp]"',
+                )
+                + "\n"
+            )
+            return 2
+        _run_mcp_server()
         return 0
 
     parser.print_help()

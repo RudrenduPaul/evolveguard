@@ -1,5 +1,6 @@
 """Ported from src/evolveguard-cli/cli.test.ts."""
 import json
+import sys
 
 from evolveguard.cli import run_cli
 
@@ -154,10 +155,30 @@ def test_record_exits_2_when_fixtures_malformed(tmp_path, capsys):
     assert "WHAT:" in capsys.readouterr().err
 
 
-def test_mcp_prints_coming_soon_and_exits_0(capsys):
+def test_mcp_delegates_to_mcp_server_main(monkeypatch):
+    calls = []
+    monkeypatch.setattr("evolveguard.mcp_server.main", lambda: calls.append(True))
+
     code = run_cli(["evolveguard", "mcp"])
+
     assert code == 0
-    assert "not implemented yet" in capsys.readouterr().out
+    assert calls == [True]
+
+
+def test_mcp_reports_missing_extra_when_mcp_server_unavailable(monkeypatch, capsys):
+    # A None entry in sys.modules forces the next `import`/`from ... import`
+    # of that module to raise ImportError, simulating the `mcp` extra not
+    # being installed, without needing to actually uninstall it.
+    monkeypatch.setitem(sys.modules, "evolveguard.mcp_server", None)
+
+    code = run_cli(["evolveguard", "mcp"])
+
+    assert code == 2
+    err = capsys.readouterr().err
+    assert "WHAT:" in err
+    assert "WHY:" in err
+    assert "FIX:" in err
+    assert "mcp" in err.lower()
 
 
 def test_help_exits_0(capsys):

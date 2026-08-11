@@ -8,6 +8,23 @@ apply to. Both were renamed 2026-07-19 from the old plain `evolveguard`
 (entries below predating the rename refer to the package by its name at the
 time; the old `evolveguard` name is now deprecated on both registries).
 
+## 0.1.4 -- 2026-08-10 (Python only)
+
+### Added
+
+- A real Model Context Protocol server for the Python/PyPI distribution
+  (`evolveguard.mcp_server`, optional `mcp` extra: `pip install
+  "evolveguard-cli[mcp]"`, started via the `evolveguard-mcp` console script
+  or `evolveguard mcp`). Exposes a single generic `run(args: list[str])`
+  tool that shells out to the installed `evolveguard` CLI with the given
+  argv and returns `{returncode, stdout, stderr, json?}`, so one tool
+  covers `record`/`check`/`report` without a bespoke MCP tool per
+  subcommand. Uses `mcp.server.MCPServer` (the `mcp` SDK's current
+  high-level server class, 2.0.0+). The npm/TypeScript distribution's
+  `evolveguard mcp` remains a "coming soon" stub; not part of this release.
+- The `evolveguard mcp` CLI subcommand (Python) now delegates to this new
+  server instead of printing "not implemented yet."
+
 ## 0.1.4 -- 2026-08-08 (npm only)
 
 ### Fixed

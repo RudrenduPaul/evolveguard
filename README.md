@@ -1,3 +1,5 @@
+<!-- mcp-name: io.github.RudrenduPaul/evolveguard -->
+
 # evolveguard
 
 [![CI](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml/badge.svg)](https://github.com/RudrenduPaul/evolveguard/actions/workflows/ci.yml)
@@ -12,6 +14,7 @@
 <a href="#quickstart">Quickstart</a> •
 <a href="#cli-command-reference">CLI reference</a> •
 <a href="#agent-native-usage">Agent-native usage</a> •
+<a href="#mcp-server">MCP server</a> •
 <a href="#how-it-compares">How it compares</a> •
 <a href="#faq">FAQ</a>
 </p>
@@ -286,10 +289,49 @@ evolveguard check ./SKILL.md --json
 }
 ```
 
-> [!WARNING]
-> `evolveguard mcp` is documented but not implemented yet, in either distribution. Until
-> it ships, call `record`/`check`/`report --json` directly as a subprocess from your
-> coding agent.
+> [!NOTE]
+> The Python distribution ships a real MCP server (see [MCP server](#mcp-server) below).
+> The npm/TypeScript distribution's `evolveguard mcp` subcommand is still a
+> "coming soon" stub; until it ships, call `record`/`check`/`report --json` directly as
+> a subprocess from your coding agent, or use the Python MCP server even if the rest of
+> your toolchain is on the npm package.
+
+## MCP Server
+
+The Python distribution (`evolveguard-cli` on PyPI) ships a Model Context Protocol
+server, so an MCP-compatible agent (Claude Desktop, Claude Code, etc.) can call
+evolveguard directly instead of shelling out and parsing text. The npm/TypeScript
+distribution does not ship one yet -- its `evolveguard mcp` subcommand remains a stub.
+
+```bash
+pip install "evolveguard-cli[mcp]"
+```
+
+Add it to your MCP client's config, for example Claude Desktop's
+`claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "evolveguard": {
+      "command": "evolveguard-mcp"
+    }
+  }
+}
+```
+
+It exposes a single tool, `run(args: list[str])`, that shells out to the installed
+`evolveguard` CLI with the exact argv you'd type at a terminal and returns
+`{returncode, stdout, stderr, json?}` (or `{error: ...}` if the command fails, times
+out, or exits non-zero) -- so one tool covers `record`, `check`, and `report` without a
+bespoke MCP tool per subcommand. Example call from an agent:
+
+```json
+{ "tool": "run", "arguments": { "args": ["check", "./SKILL.md", "--json"] } }
+```
+
+which returns the same structured report `evolveguard check ./SKILL.md --json` would
+print, plus the raw `returncode`/`stdout`/`stderr`.
 
 ## Library API
 
@@ -444,10 +486,11 @@ It only sees _declared or shown_ capability, not runtime behavior. A skill could
 `check` and still behave differently on a given prompt in ways that do not touch its
 capability surface. The false-positive benchmark (see "Features" above) is also
 currently a small, hand-labeled corpus of 5 before/after pairs, not a large dataset, so
-treat the 0% figure as a starting measurement, not a statistical guarantee. The `mcp`
-subcommand is also documented but not implemented yet in either distribution, and the
-npm build's `evolveguard --version` output currently lags the package's real published
-version (see "CLI command reference" above).
+treat the 0% figure as a starting measurement, not a statistical guarantee. The Python
+distribution ships a real MCP server (see "MCP server" above); the npm/TypeScript
+`mcp` subcommand is still a "coming soon" stub, and the npm build's `evolveguard
+--version` output currently lags the package's real published version (see "CLI
+command reference" above).
 
 **Is this a general agent-evolution framework?**
 No. See "How it compares" above. evolveguard deliberately does not build or host a

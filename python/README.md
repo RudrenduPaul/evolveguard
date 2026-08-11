@@ -1,3 +1,5 @@
+<!-- mcp-name: io.github.RudrenduPaul/evolveguard -->
+
 # evolveguard (Python)
 
 Regression-testing CI gate for self-edited Claude Agent Skills -- `SKILL.md`
@@ -198,10 +200,51 @@ parse directly:
 evolveguard check ./SKILL.md --json
 ```
 
-`evolveguard mcp` is documented but not implemented yet in either
-distribution -- call `record`/`check`/`report --json` directly as a
-subprocess (or the library functions in-process) from your coding agent
-until it ships.
+`evolveguard mcp` (the argparse subcommand) is documented but not
+implemented as its own MCP server -- it now delegates to the real MCP
+server described below. The npm/TypeScript distribution's `evolveguard
+mcp` is still a "coming soon" stub; call `record`/`check`/`report --json`
+directly as a subprocess (or the library functions in-process) from your
+coding agent if you're on that distribution.
+
+## MCP Server
+
+This package ships a Model Context Protocol server, so an MCP-compatible
+agent (Claude Desktop, Claude Code, etc.) can call evolveguard directly
+instead of shelling out and parsing text.
+
+```bash
+pip install "evolveguard-cli[mcp]"
+```
+
+Add it to your MCP client's config, for example Claude Desktop's
+`claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "evolveguard": {
+      "command": "evolveguard-mcp"
+    }
+  }
+}
+```
+
+It exposes a single tool, `run(args: list[str])`, that shells out to the
+installed `evolveguard` CLI with the exact argv you'd type at a terminal
+and returns `{returncode, stdout, stderr, json?}` (or `{error: ...}` if the
+command fails, times out, or exits non-zero) -- one tool covers `record`,
+`check`, and `report` without a bespoke MCP tool per subcommand. Example
+call from an agent:
+
+```json
+{ "tool": "run", "arguments": { "args": ["check", "./SKILL.md", "--json"] } }
+```
+
+which returns the same structured report `evolveguard check ./SKILL.md
+--json` would print, plus the raw `returncode`/`stdout`/`stderr`. You can
+also run `evolveguard mcp` (the CLI subcommand) as an equivalent to
+`evolveguard-mcp` if the `mcp` extra is installed.
 
 ## False-positive rate
 
