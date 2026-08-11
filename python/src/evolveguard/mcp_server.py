@@ -26,48 +26,62 @@ from mcp.server import MCPServer
 _CLI_BIN = shutil.which("evolveguard") or "evolveguard"
 _TIMEOUT_SECONDS = 120
 
-_FALLBACK_DESCRIPTION = (
-    "Run an evolveguard CLI command. `args` is the exact argv you would "
-    'pass to the `evolveguard` command line tool, e.g. ["check", '
-    '"./SKILL.md", "--json"]. Subcommands: record (baseline a skill '
-    "against a fixtures file), check (replay fixtures against the current "
-    "skill and report drift), report (print a saved evolveguard-report.json). "
-    "Pass --json to record/check/report for structured output. Returns "
-    "{returncode, stdout, stderr, json?} on success, or {error: ...} if the "
-    "command could not be run, timed out, or exited non-zero."
+_DESCRIPTION = (
+    "Runs the evolveguard CLI to detect capability drift in a Claude Agent Skill "
+    "(SKILL.md) or Claude Code memory file (MEMORY.md) after it has been edited, by "
+    "parsing its declared frontmatter scope and any static evidence of network or "
+    "filesystem-write behavior, and diffing that capability surface against a "
+    "previously recorded baseline. Call this before merging or accepting a "
+    "human- or agent-authored edit to a skill/memory file, to catch a silent "
+    "widening of what the skill is now capable of (e.g. a new fs.write call, a "
+    "scope glob widened from ./workspace/** to ./**) before it ships. Do not call "
+    "this for anything unrelated to SKILL.md/MEMORY.md capability regression, and "
+    "do not expect it to catch behavioral drift that never touches the file's "
+    "declared or inferred capability surface: evolveguard is purely static "
+    "analysis, it never runs a live LLM agent, replays a real conversation, "
+    "executes the skill's own hook scripts, or makes network calls.\n\n"
+    "Prerequisites: a baseline must already exist for the target skill (create one "
+    "first with a `record` call, which needs a fixtures JSON file of labeled "
+    "prompts) before `check` is useful; `check` against a skill with no baseline "
+    "will error. `report` only needs a previously written evolveguard-report.json.\n\n"
+    "Side effects and idempotency: `record` writes a baseline JSON file (default "
+    "<skill-dir>/.evolveguard-baseline.json, override with --baseline) and is "
+    "idempotent -- re-running it overwrites the baseline with a fresh snapshot of "
+    "the current file, it does not append or merge. `check` writes a report JSON "
+    "file (default ./evolveguard-report.json, override with --report) and is "
+    "read-only with respect to the skill/baseline files themselves; running it "
+    "twice against unchanged inputs produces the same report. `report` only reads "
+    "a file, it writes nothing. None of the three subcommands make network calls "
+    "or execute any code from the skill file being analyzed. On failure (missing "
+    "file, bad JSON, no baseline found), the CLI exits non-zero and this tool "
+    "returns {error: ...} instead of raising, so a failed call never breaks your "
+    "turn.\n\n"
+    "`args` is the exact argv you would type after `evolveguard` on a command "
+    "line, as a list of strings. Real examples pulled from this CLI's own --help:\n"
+    '  ["record", "./skills/my-skill/SKILL.md", "--fixtures", "./fixtures/my-skill.json", "--json"]\n'
+    '  ["check", "./skills/my-skill/SKILL.md", "--json"]\n'
+    '  ["check", "./skills/my-skill/SKILL.md", "--allow-drift", "--json"]  # report drift but exit 0\n'
+    '  ["report", "./evolveguard-report.json", "--json"]\n'
+    "Append --json to any of record/check/report for structured output (recommended "
+    "for programmatic use); omit it for human-readable text. Pass [\"--help\"] or "
+    '["<subcommand>", "--help"] as args to discover the full flag set directly from '
+    "the installed CLI.\n\n"
+    "Exit codes surfaced via returncode: 0 = success (record: baseline written; "
+    "check: all fixtures PASS, no surface drift; report: printed OK), 1 = check "
+    "found DRIFT (blocks merge unless --allow-drift was passed), 2 = a usage error "
+    "or a file that failed to parse. Return shape on success: {returncode: int, "
+    "stdout: str, stderr: str, json?: {...}} where json is present only when stdout "
+    "parsed as valid JSON (i.e. --json was passed). check --json's json payload has "
+    "the shape {schemaVersion, skillName, results: [{id, verdict, changes}], "
+    "surfaceChanges: [...], summary: {pass, drift, total}, exitCode}. On failure "
+    "the return shape is {error: str, returncode?: int, stdout?: str, stderr?: str}."
 )
-
-
-def _build_description() -> str:
-    """Builds the `run` tool description from the CLI's real `--help`
-    output at import time, so the tool description stays accurate as
-    subcommands are added. Falls back to a static description if the
-    subprocess call fails for any reason (binary missing, not executable,
-    non-zero exit, timeout)."""
-    try:
-        proc = subprocess.run(
-            [_CLI_BIN, "--help"],
-            capture_output=True,
-            text=True,
-            timeout=10,
-        )
-        help_text = (proc.stdout or proc.stderr or "").strip()
-        if not help_text:
-            return _FALLBACK_DESCRIPTION
-        return (
-            "Run an evolveguard CLI command. `args` is the exact argv you "
-            "would pass to the `evolveguard` command line tool "
-            '(e.g. ["check", "./SKILL.md", "--json"]).\n\n'
-            f"Real `evolveguard --help` output:\n{help_text}"
-        )
-    except (OSError, subprocess.TimeoutExpired):
-        return _FALLBACK_DESCRIPTION
 
 
 mcp = MCPServer("evolveguard")
 
 
-@mcp.tool(description=_build_description())
+@mcp.tool(description=_DESCRIPTION)
 def run(args: list[str]) -> dict[str, Any]:
     try:
         proc = subprocess.run(

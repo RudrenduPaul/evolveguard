@@ -75,15 +75,18 @@ def test_run_returns_error_dict_on_timeout():
     assert "timed out" in result["error"]
 
 
-def test_build_description_falls_back_when_help_call_fails():
-    with patch("subprocess.run", side_effect=OSError("no such file")):
-        description = mcp_server._build_description()
+def test_description_covers_the_real_subcommands_and_return_shape():
+    description = mcp_server._DESCRIPTION
 
-    assert description == mcp_server._FALLBACK_DESCRIPTION
+    for subcommand in ("record", "check", "report"):
+        assert subcommand in description
+    assert "--json" in description
+    assert "returncode" in description
+    assert "error" in description
 
 
-def test_build_description_uses_real_help_output_when_available():
-    with patch("subprocess.run", return_value=_fake_completed(0, "usage: evolveguard ...", "")):
-        description = mcp_server._build_description()
+def test_run_tool_uses_the_static_description():
+    tools = asyncio.run(mcp_server.mcp.list_tools())
+    (run_tool,) = [t for t in tools if t.name == "run"]
 
-    assert "usage: evolveguard" in description
+    assert run_tool.description == mcp_server._DESCRIPTION
