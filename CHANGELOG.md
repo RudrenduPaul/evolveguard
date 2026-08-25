@@ -14,7 +14,7 @@ time; the old `evolveguard` name is now deprecated on both registries).
 
 - A real Model Context Protocol server for the Python/PyPI distribution
   (`evolveguard.mcp_server`, optional `mcp` extra: `pip install
-  "evolveguard-cli[mcp]"`, started via the `evolveguard-mcp` console script
+"evolveguard-cli[mcp]"`, started via the `evolveguard-mcp` console script
   or `evolveguard mcp`). Exposes a single generic `run(args: list[str])`
   tool that shells out to the installed `evolveguard` CLI with the given
   argv and returns `{returncode, stdout, stderr, json?}`, so one tool
