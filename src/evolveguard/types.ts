@@ -95,10 +95,7 @@ export interface FixtureDiff {
 }
 
 export type CapabilityChangeKind =
-  | 'added'
-  | 'removed'
-  | 'scope-widened'
-  | 'scope-changed';
+  'added' | 'removed' | 'scope-widened' | 'scope-changed';
 
 export interface CapabilityChange {
   kind: CapabilityChangeKind;

@@ -35,9 +35,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "pytest>=7.0,<9",
+  "pytest>=7.0,<10",
   "build>=1.0,<2",
-  "twine>=5.0,<7",
+  "twine>=5.0,<8",
 ]
 # The mcp package requires Python >=3.10, stricter than this project's own
 # >=3.9 floor, so it's kept optional rather than a base dependency.

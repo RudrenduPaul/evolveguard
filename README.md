@@ -278,9 +278,7 @@ evolveguard check ./SKILL.md --json
     {
       "id": "scan-a-monorepo",
       "verdict": "DRIFT",
-      "changes": [
-        /* ... */
-      ]
+      "changes": [/* ... */]
     }
   ],
   "surfaceChanges": [],
