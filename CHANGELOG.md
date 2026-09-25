@@ -8,6 +8,18 @@ apply to. Both were renamed 2026-07-19 from the old plain `evolveguard`
 (entries below predating the rename refer to the package by its name at the
 time; the old `evolveguard` name is now deprecated on both registries).
 
+## 0.2.0 -- 2026-09-24 (npm only)
+
+### Changed
+
+- Runtime dependency upgrades: `commander` 12 to 14, `minimatch` 9 to 10,
+  `zod` 3 to 4, `yaml` 2.9.0 to 2.9.1. Dev toolchain moved to TypeScript 6,
+  ESLint 10, Prettier 3.9, and `@types/node` 26 (the build now uses
+  `module`/`moduleResolution` `Node16`).
+- npm publishing moves to npm Trusted Publishing (GitHub Actions OIDC, no
+  long-lived token) via `.github/workflows/publish-npm.yml`.
+- The PyPI distribution is unchanged (dev-extra version caps only, still 0.1.5).
+
 ## 0.1.4 -- 2026-08-10 (Python only)
 
 ### Added
